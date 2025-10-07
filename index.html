@@ -95,6 +95,9 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
 const RESERVA_URL = "https://grupodvbr.github.io/aniversariosmercatto/";
 
+// 🔹 URL da imagem do convite
+const FOTO_URL = "https://github.com/ClenaStore/capsimples/blob/main/paste/Design%20sem%20nome%20(25).png?raw=true";
+
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
@@ -119,7 +122,6 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    // Preenche filtro empresa
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     document.getElementById('empresaFiltro').innerHTML=
       '<option value="">Todas as empresas</option>'+
@@ -138,7 +140,6 @@ function renderizar(lista){
   tb.innerHTML=''; mob.innerHTML='';
   lista.forEach(a=>{
     const sent=enviados.includes(a.nome+a.aniversario);
-    // Desktop
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${esc(a.empresa)}</td>
@@ -148,7 +149,7 @@ function renderizar(lista){
       <td><button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}','${a.empresa}',this)">🎁 WhatsApp</button></td>
     `;
     tb.appendChild(tr);
-    // Mobile
+
     const card=document.createElement('div');
     card.className='mcard';
     card.innerHTML=`
@@ -184,14 +185,18 @@ function filtrar(){
 function enviar(nome, aniversario, telefone, empresa, btn){
   if(!telefone){alert('Telefone não encontrado.');return;}
 
+  // 🔹 Mensagem com link da foto incluído
   const mensagem = [
     `🎉 Olá ${nome}! Aqui é o *${empresa}* 💚`,
     ``,
     `O Mercatto Delícia deseja um feliz aniversário! 🥂🎂`,
     `🎈 Você é nosso convidado especial para comemorar conosco!`,
     `📅 Seu aniversário: ${aniversario}`,
+    ``,
     `📍 Faça sua reserva agora:`,
     `${RESERVA_URL}`,
+    ``,
+    `🖼️ Veja nosso convite: ${FOTO_URL}`,
     ``,
     `Esperamos por você! ✨`
   ].join('\n');
@@ -201,7 +206,6 @@ function enviar(nome, aniversario, telefone, empresa, btn){
   const link=`https://wa.me/${fone}?${params.toString()}`;
   window.open(link,'_blank');
 
-  // Marca como enviado
   btn.classList.add('sent');
   if(!enviados.includes(nome+aniversario)){
     enviados.push(nome+aniversario);
