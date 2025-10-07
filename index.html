@@ -132,27 +132,32 @@ function filtrar(){
   renderizar(filtrados);
 }
 
-function enviar(nome, aniversario, telefone){
-  if(!telefone){alert('Telefone não encontrado.');return;}
+function enviar(nome, aniversario, telefone) {
+  if (!telefone) {
+    alert('Telefone não encontrado.');
+    return;
+  }
 
-  // Texto da mensagem (sem quebra de linha manual mal interpretada)
-  const mensagem = `
-🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
+  // Mensagem base
+  const mensagem = [
+    `🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂`,
+    ``,
+    `🎈 Você é nosso convidado especial para comemorar conosco! 💚`,
+    `📅 Seu aniversário: ${aniversario}`,
+    `📍 Faça sua reserva agora:`,
+    `${RESERVA_URL}`,
+    ``,
+    `Esperamos por você! ✨`
+  ].join('\n'); // mantém quebras de linha corretas
 
-🎈 Você é nosso convidado especial para comemorar conosco! 💚
-📅 Seu aniversário: ${aniversario}
-📍 Faça sua reserva agora:
-${RESERVA_URL}
-
-Esperamos por você! ✨
-  `.trim();
-
-  // Codifica corretamente toda a mensagem
-  const texto = encodeURIComponent(mensagem);
-
-  // Limpa o telefone e abre o WhatsApp
+  // Remove tudo que não for número
   const fone = telefone.replace(/\D/g, '');
-  const link = `https://wa.me/${fone}?text=${texto}`;
+
+  // Usa URLSearchParams para construir a URL corretamente
+  const params = new URLSearchParams({ text: mensagem });
+  const link = `https://wa.me/${fone}?${params.toString()}`;
+
+  // Abre o WhatsApp em nova aba
   window.open(link, '_blank');
 }
 
