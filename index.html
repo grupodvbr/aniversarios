@@ -1,225 +1,216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🎉 Aniversariantes • Mercatto Delícia</title>
-<style>
-:root{
-  --bg:#0b1220;--card:#111827;--line:#1f2937;
-  --text:#e5e7eb;--muted:#9ca3af;
-  --brand:#22c55e;--sent:#3b82f6;
-}
-body{
-  margin:0;
-  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg);color:var(--text);
-}
-.container{max-width:1000px;margin:16px auto;padding:0 12px}
-.card{
-  background:var(--card);border:1px solid var(--line);
-  border-radius:12px;padding:16px;
-}
-h1{text-align:center;margin:0 0 12px;font-size:1.3rem}
-.filter{
-  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;
-  justify-content:center
-}
-input,select,button{
-  border-radius:8px;padding:8px 10px;font-size:.9rem
-}
-input,select{
-  background:#0c1322;color:var(--text);
-  border:1px solid var(--line);
-}
-button{
-  border:none;cursor:pointer;font-weight:600;
-  transition:opacity .2s;
-}
-button:hover{opacity:.85}
-.btn-whats{
-  background:var(--brand);color:#001a0c;border-radius:8px;
-  padding:6px 10px;display:inline-flex;align-items:center;
-  gap:6px;
-}
-.btn-whats.sent{
-  background:var(--sent);color:#fff;
-}
-#msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
-footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
+  <meta charset="UTF-8" />
+  <title>Reservas • Mercatto Delícia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta name="color-scheme" content="dark" />
 
-/* ---------- Desktop tabela ---------- */
-@media(min-width:700px){
-  table{width:100%;border-collapse:collapse;margin-top:10px}
-  th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
-  th{color:var(--muted);font-weight:500}
-}
+  <!-- 🔹 ÍCONE E FOTO DE CAPA -->
+  <link rel="icon" type="image/png" href="https://github.com/grupodvbr/aniversariosmercatto/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_d0cbe205.jpg?raw=true">
+  <link rel="apple-touch-icon" href="https://github.com/grupodvbr/aniversariosmercatto/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_d0cbe205.jpg?raw=true">
 
-/* ---------- Mobile cards ---------- */
-@media(max-width:699px){
-  table{display:none}
-  .mobile-list{display:flex;flex-direction:column;gap:10px}
-  .mcard{
-    background:#0c1322;border:1px solid var(--line);
-    border-radius:10px;padding:10px;
-    display:flex;flex-direction:column;gap:6px;
-  }
-  .mcard strong{color:var(--muted);font-size:.85rem}
-}
-</style>
-</head>
-<body>
-<div class="container">
-  <h1>🎉 Aniversariantes • Mercatto Delícia</h1>
-  <div class="card">
-    <div class="filter">
-      <select id="empresaFiltro"><option value="">Todas as empresas</option></select>
-      <input type="date" id="inicio">
-      <input type="date" id="fim">
-      <button onclick="filtrar()">🔍 Filtrar</button>
-      <button onclick="resetar()">♻️ Mês atual</button>
-    </div>
-    <div id="msg">Carregando aniversariantes...</div>
-    <table id="tabela">
-      <thead>
-        <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Sugestão</th><th>Ações</th></tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="mobile-list" id="mobileList"></div>
-  </div>
-</div>
-<footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
+  <!-- 🔹 METADADOS PARA COMPARTILHAMENTO -->
+  <meta property="og:title" content="Reservas • Mercatto Delícia">
+  <meta property="og:description" content="Faça sua reserva no Mercatto Delícia e garanta um momento especial!">
+  <meta property="og:image" content="https://github.com/grupodvbr/aniversariosmercatto/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_d0cbe205.jpg?raw=true">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://grupodvbr.github.io/aniversariosmercatto/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Reservas • Mercatto Delícia">
+  <meta name="twitter:description" content="Faça sua reserva no Mercatto Delícia e garanta um momento especial!">
+  <meta name="twitter:image" content="https://github.com/grupodvbr/aniversariosmercatto/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_d0cbe205.jpg?raw=true">
 
-<script>
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
-const RESERVA_URL = "https://grupodvbr.github.io/aniversariosmercatto/";
+  <style>
+    :root{
+      --brand:#22c55e; --brand-2:#16a34a; --text:#f5f7fb; --muted:#c9ced8;
+      --line:rgba(255,255,255,.14);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:system-ui,Arial,sans-serif;background:#0b0e13;color:var(--text)}
+    header{padding:16px}
 
-// 🔹 URL da imagem do convite
-const FOTO_URL = "https://github.com/grupodvbr/aniversarios/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_4efd54f3.jpg?raw=true";
-
-let aniversariantes = [];
-const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
-
-function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function formatDateInput(d){return d.toISOString().slice(0,10);}
-function converterData(diaMes){
-  const [dia,mes]=diaMes.split("/").map(Number);
-  const ano=new Date().getFullYear();
-  return `${ano}-${String(mes).padStart(2,"0")}-${String(dia).padStart(2,"0")}`;
-}
-
-async function carregar(){
-  const msg=document.getElementById('msg');
-  const tb=document.getElementById('tbody');
-  msg.textContent='Carregando...'; tb.innerHTML='';
-  try{
-    const res=await fetch(GAS_API_URL);
-    const data=await res.json();
-    aniversariantes=data.aniversariantes||[];
-
-    if(!aniversariantes.length){
-      msg.textContent='Nenhum aniversariante encontrado.';return;
+    .hero{max-width:840px;margin:0 auto}
+    .hero-img{
+      display:block;width:100%;height:auto;border-radius:18px;
+      box-shadow:0 10px 32px rgba(0,0,0,.45);object-fit:cover;
     }
 
-    const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
-    document.getElementById('empresaFiltro').innerHTML=
-      '<option value="">Todas as empresas</option>'+
-      empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
+    .actions{
+      max-width:840px;margin:12px auto 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center
+    }
+    .btn{
+      padding:14px 18px;border-radius:14px;font-weight:800;font-size:15px;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      border:1px solid var(--line);cursor:pointer;text-decoration:none;color:#fff;
+      background:rgba(255,255,255,.08);transition:filter .2s ease,transform .06s ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn:hover{filter:brightness(1.05)}
+    .btn.whatsapp{background:linear-gradient(180deg,var(--brand),var(--brand-2));border:none}
+    @media (max-width:560px){ .btn{width:100%} }
 
-    msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
-    renderizar(aniversariantes);
-  }catch(e){
-    msg.textContent='⚠️ Erro: '+e.message;
-  }
-}
+    dialog{width:min(560px,96vw);border:none;padding:0;border-radius:18px;background:#0c0f14;color:#fff}
+    dialog::backdrop{background:rgba(0,0,0,.55)}
+    .modal-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    .modal-head h3{margin:0;font-size:16px}
+    .modal-head button{border:1px solid var(--line);background:transparent;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .modal-body{padding:16px}
+    form{display:grid;gap:14px}
+    label{font-weight:700;font-size:13px}
+    input,textarea,button{
+      padding:12px;border-radius:12px;border:1px solid var(--line);background:#0f131a;color:#fff;font-size:15px
+    }
+    .row{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+    @media(max-width:640px){.row{grid-template-columns:1fr}}
+    .submit{background:linear-gradient(180deg,var(--brand),var(--brand-2));border:none;font-weight:800;cursor:pointer}
+    .spinner{display:none;color:var(--muted);font-size:14px;text-align:center}
+    .spinner.show{display:block}
+  </style>
+</head>
+<body>
 
-function renderizar(lista){
-  const tb=document.getElementById('tbody');
-  const mob=document.getElementById('mobileList');
-  tb.innerHTML=''; mob.innerHTML='';
-  lista.forEach(a=>{
-    const sent=enviados.includes(a.nome+a.aniversario);
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${esc(a.empresa)}</td>
-      <td>${esc(a.nome)}</td>
-      <td>${a.aniversario}</td>
-      <td>${esc(a.sugestao)}</td>
-      <td><button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}','${a.empresa}',this)">🎁 WhatsApp</button></td>
-    `;
-    tb.appendChild(tr);
+  <header>
+    <div class="hero">
+      <img
+        class="hero-img"
+        src="https://github.com/grupodvbr/aniversariosmercatto/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_d0cbe205.jpg?raw=true"
+        alt="Mercatto Delícia - Aniversário">
+    </div>
 
-    const card=document.createElement('div');
-    card.className='mcard';
-    card.innerHTML=`
-      <div><strong>Empresa:</strong> ${esc(a.empresa)}</div>
-      <div><strong>Nome:</strong> ${esc(a.nome)}</div>
-      <div><strong>Aniversário:</strong> ${a.aniversario}</div>
-      ${a.sugestao?`<div><strong>Sugestão:</strong> ${esc(a.sugestao)}</div>`:''}
-      <button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}','${a.empresa}',this)">🎁 WhatsApp</button>
-    `;
-    mob.appendChild(card);
-  });
-}
+    <div class="actions">
+      <button id="btnReservar" class="btn reserve" type="button">🗓️ Reservar</button>
+      <a id="btnAtendente" class="btn whatsapp">💬 Falar com atendente</a>
+    </div>
+  </header>
 
-function filtrar(){
-  const empresa=document.getElementById('empresaFiltro').value;
-  const inicio=document.getElementById('inicio').value;
-  const fim=document.getElementById('fim').value;
-  let filtrados=aniversariantes;
+  <dialog id="modalReserva">
+    <div class="modal-head">
+      <h3>📅 Nova Reserva</h3>
+      <button id="fecharModal" type="button">Fechar</button>
+    </div>
+    <div class="modal-body">
+      <!-- 🔹 "novalidate" evita erro automático do navegador -->
+      <form id="reservaForm" autocomplete="on" novalidate>
+        <div class="row">
+          <div>
+            <label>Nome</label>
+            <input type="text" name="Nome" required placeholder="Seu nome completo">
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" name="Email" required placeholder="seu@email.com">
+          </div>
+        </div>
 
-  if(empresa){filtrados=filtrados.filter(a=>a.empresa===empresa);}
-  if(inicio && fim){
-    const ini=new Date(inicio);
-    const f=new Date(fim);
-    filtrados=filtrados.filter(a=>{
-      const conv=new Date(converterData(a.aniversario));
-      return conv>=ini && conv<=f;
+        <div class="row">
+          <div>
+            <label>Telefone</label>
+            <input type="tel" name="Telefone" required inputmode="tel" placeholder="(DDD) 9 0000-0000">
+          </div>
+          <div>
+            <label>Pessoas</label>
+            <input type="number" name="Pessoas" min="1" required placeholder="Qtd. de pessoas">
+          </div>
+        </div>
+
+        <div>
+          <label>DataHora</label>
+          <input type="datetime-local" name="DataHora" required>
+        </div>
+
+        <div>
+          <label>Observacoes</label>
+          <textarea name="Observacoes" rows="3" placeholder="Preferências, observações..."></textarea>
+        </div>
+
+        <div class="spinner" id="spinner">⬤ Enviando reserva...</div>
+        <button class="submit" type="submit">Enviar Reserva</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script>
+    const WHATSAPP_NUMBER = "557736135148";
+    const WHATSAPP_MSG    = "Olá! Quero fazer uma reserva no Mercatto Delícia.";
+    const GAS_ENDPOINT    = "https://script.google.com/macros/s/AKfycbwFdzSyszOSW_VWMcIAZa1sLlKLw-ZeCOs3st6VFEtN3tk3VkjFVOMtsTA9DeUZl4UDAA/exec";
+
+    const modal        = document.getElementById('modalReserva');
+    const btnReservar  = document.getElementById('btnReservar');
+    const btnAtendente = document.getElementById('btnAtendente');
+    const fecharModal  = document.getElementById('fecharModal');
+    const form         = document.getElementById('reservaForm');
+    const spinner      = document.getElementById('spinner');
+
+    btnReservar.addEventListener('click', () => modal.showModal());
+    fecharModal.addEventListener('click', () => modal.close());
+    modal.addEventListener('cancel', (e)=>{ e.preventDefault(); modal.close(); });
+
+    btnAtendente.addEventListener('click', (e) => {
+      e.preventDefault();
+      const texto = encodeURIComponent(WHATSAPP_MSG + "\n\nPágina: " + location.href);
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${texto}`, "_blank", "noopener");
     });
-  }
-  document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
-  renderizar(filtrados);
-}
 
-function enviar(nome, aniversario, telefone, empresa, btn){
-  if(!telefone){alert('Telefone não encontrado.');return;}
+    // ✅ Validação universal de e-mail (.com, .com.br, subdomínios)
+    function isValidEmail(s){
+      const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+      return regex.test(String(s||"").trim());
+    }
 
-  // 🔹 Mensagem com link da foto incluído
-  const mensagem = [
-    `🎉 Olá ${nome}! Aqui é o *${empresa}*🎉 `,
-    ``,
-    `Venho te deseja um feliz aniversário! 🥂🎂`,
-    `🎈 Você é nosso convidado especial para comemorar conosco esse mês tão especial!`,
-    `Seu aniversário é dia ${aniversario}, mas... Preparamos um presente que vale pelo mês inteiro`,
-    ``,
-    `📍 Faça sua reserva:`,
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      spinner.classList.add("show");
 
-    `Esperamos por você! ✨`
-  ].join('\n');
+      const fd = new FormData(form);
+      const Nome         = (fd.get("Nome")||"").trim();
+      const Email        = (fd.get("Email")||"").trim();
+      const Telefone     = (fd.get("Telefone")||"").trim();
+      const Pessoas      = (fd.get("Pessoas")||"").trim();
+      const DataHora     = (fd.get("DataHora")||"").trim();
+      const Observacoes  = (fd.get("Observacoes")||"").trim();
 
-  const fone=telefone.replace(/\D/g,'');
-  const params=new URLSearchParams({text:mensagem});
-  const link=`https://wa.me/${fone}?${params.toString()}`;
-  window.open(link,'_blank');
+      if (!isValidEmail(Email)) {
+        alert("❗ Informe um e-mail válido, ex: nome@dominio.com");
+        spinner.classList.remove("show");
+        return;
+      }
 
-  btn.classList.add('sent');
-  if(!enviados.includes(nome+aniversario)){
-    enviados.push(nome+aniversario);
-    localStorage.setItem("aniversariosEnviados",JSON.stringify(enviados));
-  }
-}
+      const params = new URLSearchParams();
+      params.append("acao", "cadastrar");
+      params.append("status", "Pendente");
+      params.append("nome", Nome);
+      params.append("email", Email);
+      params.append("telefone", Telefone);
+      params.append("pessoas", Pessoas);
+      params.append("mesa", "");
+      params.append("cardapio", "");
+      params.append("datahora[]", DataHora);
+      params.append("valorEstimado", "");
+      params.append("pagamentoAntecipado", "");
+      params.append("banco", "");
+      params.append("valorFinalPago", "");
+      params.append("observacoes", Observacoes);
+      params.append("nomeArquivo", "");
+      params.append("arquivoURL", "");
 
-function resetar(){
-  const d=new Date();
-  const inicio=new Date(d.getFullYear(),d.getMonth(),1);
-  const fim=new Date(d.getFullYear(),d.getMonth()+1,0);
-  document.getElementById('inicio').value=formatDateInput(inicio);
-  document.getElementById('fim').value=formatDateInput(fim);
-  filtrar();
-}
-
-document.addEventListener('DOMContentLoaded',carregar);
-</script>
+      try {
+        const res = await fetch(GAS_ENDPOINT, { method:"POST", body: params });
+        const texto = await res.text();
+        alert(texto || "✅ Reserva enviada com sucesso!");
+        form.reset();
+        modal.close();
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ Erro ao enviar reserva. Verifique sua conexão e tente novamente.");
+      } finally {
+        spinner.classList.remove("show");
+      }
+    });
+  </script>
 </body>
 </html>
