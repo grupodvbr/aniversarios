@@ -49,9 +49,9 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 <footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
 
 <script>
-// 🔗 SEU LINK DO GAS (substitua pelo seu URL /exec)
+// 🔗 SEU LINK DO GAS
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
-const RESERVA_URL = "https://seusite.com/reservas";
+const RESERVA_URL = "https://grupodvbr.github.io/aniversariosmercatto/"; // link WhatsApp reservas
 
 let aniversariantes = [];
 
@@ -132,21 +132,10 @@ function filtrar(){
   renderizar(filtrados);
 }
 
-async function enviar(nome,aniversario,telefone){
+function enviar(nome,aniversario,telefone){
   if(!telefone){alert('Telefone não encontrado.');return;}
-  try{
-    const res=await fetch(GAS_API_URL+"?action=gen-voucher",{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({nome,aniversario})
-    });
-    const data=await res.json();
-    const codigo=data.codigo||'000000';
-    const msg=encodeURIComponent(`🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂\n\nVocê ganhou um *voucher exclusivo!* 🍽️\n\n🔖 *Código:* ${codigo}\n📅 *Data:* ${aniversario}\n\nReserve sua mesa 👇\n${RESERVA_URL}\n\nEsperamos você! 💚`);
-    window.open(`https://wa.me/${telefone.replace(/\D/g,'')}?text=${msg}`,'_blank');
-  }catch(e){
-    alert('Erro ao gerar voucher: '+e.message);
-  }
+  const msg=encodeURIComponent(`🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂\n\n🎈 Você é nosso convidado especial para comemorar conosco! 💚\n\n📅 Seu aniversário: ${aniversario}\n📍 Faça sua reserva agora:\n${RESERVA_URL}\n\nEsperamos por você! ✨`);
+  window.open(`https://wa.me/${telefone.replace(/\D/g,'')}?text=${msg}`,'_blank');
 }
 
 function resetar(){
