@@ -19,7 +19,7 @@ th{color:var(--muted);font-weight:500}
 button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#001a0c;font-weight:600;cursor:pointer;transition:opacity .2s;}
 button:hover{opacity:.85}
 .filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;justify-content:center}
-input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 #msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
 footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 </style>
@@ -45,88 +45,63 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
     </table>
   </div>
 </div>
-
 <footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
 
 <script>
-// 🔗 COLOQUE AQUI A NOVA URL DO GAS
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyVTLBM_yJQad_abVPsg5v2YCr32jDcwk_9M7ODHkQWseqdA9c5zK1E_AOkBdxBuXTrWQ/exec";
+// ⚙️ COLE SUA NOVA URL DO GAS AQUI
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwuqyJ8sBUiNiDXQhWfZEC8I6u6jO-xC51VHnMoi1BptWIbbAU83EFCEuBd1_gDKPjWYQ/exec";
 const RESERVA_URL = "https://seusite.com/reservas";
 
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function formatDateInput(d){return d.toISOString().slice(0,10);}
 
 async function carregar(){
-  const empresa = document.getElementById('empresaFiltro').value.trim();
-  const inicio = document.getElementById('inicio').value;
-  const fim = document.getElementById('fim').value;
-  document.getElementById('msg').textContent = 'Carregando...';
-  const tb = document.getElementById('tbody'); tb.innerHTML='';
+  const empresa=document.getElementById('empresaFiltro').value.trim();
+  const inicio=document.getElementById('inicio').value;
+  const fim=document.getElementById('fim').value;
+  const msg=document.getElementById('msg');
+  const tb=document.getElementById('tbody');
+  msg.textContent='Carregando...'; tb.innerHTML='';
   try{
-    const res = await fetch(GAS_API_URL+"?action=get-birthdays",{
+    const res=await fetch(GAS_API_URL+"?action=get-birthdays",{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({empresa,inicio,fim})
     });
-    const data = await res.json();
-    if(!data.birthdays || !data.birthdays.length){
-      document.getElementById('msg').textContent = 'Nenhum aniversariante encontrado.';
-      return;
-    }
-    document.getElementById('msg').textContent = `${data.birthdays.length} aniversariante(s) encontrado(s).`;
+    const data=await res.json();
+    if(!data.birthdays||!data.birthdays.length){msg.textContent='Nenhum aniversariante encontrado.';return;}
+    msg.textContent=`${data.birthdays.length} aniversariante(s) encontrado(s).`;
     data.birthdays.forEach(a=>{
       const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td>${esc(a.empresa||'')}</td>
-        <td>${esc(a.name)}</td>
-        <td>${a.birthday}</td>
-        <td>${esc(a.sugestao)}</td>
-        <td><button onclick="enviar('${a.name}','${a.birthday}','${a.phoneRaw}')">🎁 Enviar via WhatsApp</button></td>
-      `;
+      tr.innerHTML=`<td>${esc(a.empresa)}</td><td>${esc(a.name)}</td><td>${a.birthday}</td><td>${esc(a.sugestao)}</td><td><button onclick="enviar('${a.name}','${a.birthday}','${a.phoneRaw}')">🎁 Enviar via WhatsApp</button></td>`;
       tb.appendChild(tr);
     });
-  }catch(e){
-    document.getElementById('msg').textContent='⚠️ Erro: '+e.message;
-  }
+  }catch(e){msg.textContent='⚠️ Erro: '+e.message;}
 }
 
 async function enviar(name,birthday,phone){
-  if(!phone){alert("Telefone ausente.");return;}
+  if(!phone){alert('Telefone não encontrado.');return;}
   try{
-    const res = await fetch(GAS_API_URL+"?action=gen-voucher",{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+    const res=await fetch(GAS_API_URL+"?action=gen-voucher",{
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name,birthday})
     });
-    const data = await res.json();
-    const code = data.code || '000000';
-    const msg = encodeURIComponent(
-`🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
-
-Como presente, você ganhou um *voucher exclusivo* para usar conosco! 🍽️
-
-🔖 *Código:* ${code}
-📅 Data: ${birthday}
-
-Reserve sua mesa clicando abaixo 👇
-${RESERVA_URL}
-
-Esperamos você! 💚`
-    );
-    const link = `https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}`;
-    window.open(link,'_blank');
-  }catch(e){alert("Erro ao gerar voucher: "+e.message);}
+    const data=await res.json();
+    const code=data.code||'000000';
+    const msg=encodeURIComponent(`🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂\n\nVocê ganhou um *voucher exclusivo!* 🍽️\n\n🔖 *Código:* ${code}\n📅 *Data:* ${birthday}\n\nReserve sua mesa 👇\n${RESERVA_URL}\n\nEsperamos você! 💚`);
+    window.open(`https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}`,'_blank');
+  }catch(e){alert('Erro ao gerar voucher: '+e.message);}
 }
 
 function resetar(){
   const d=new Date();
-  const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
-  const fim = new Date(d.getFullYear(), d.getMonth()+1, 0);
-  document.getElementById('inicio').value = formatDateInput(inicio);
-  document.getElementById('fim').value = formatDateInput(fim);
+  const inicio=new Date(d.getFullYear(),d.getMonth(),1);
+  const fim=new Date(d.getFullYear(),d.getMonth()+1,0);
+  document.getElementById('inicio').value=formatDateInput(inicio);
+  document.getElementById('fim').value=formatDateInput(fim);
   carregar();
 }
-document.addEventListener('DOMContentLoaded', resetar);
+document.addEventListener('DOMContentLoaded',resetar);
 </script>
 </body>
 </html>
