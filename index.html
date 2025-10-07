@@ -36,7 +36,7 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
       <button onclick="carregar()">🔍 Filtrar</button>
       <button onclick="resetar()">♻️ Mês atual</button>
     </div>
-    <div id="msg">Buscando aniversariantes...</div>
+    <div id="msg">Carregando aniversariantes...</div>
     <table>
       <thead>
         <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Sugestão</th><th>Ações</th></tr>
@@ -49,19 +49,18 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 <footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
 
 <script>
-// 🔗 SEU ENDPOINT GOOGLE APPS SCRIPT
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx3kiXpKYzyGWMdfLV3PNC9AorwqOSBi3MeRhFkTRAvbb52k8EhhxKnHnhAgfdjre5GzA/exec";
-const RESERVA_URL = "https://seusite.com/reservas"; // substitua pelo link de reservas real
+// 🔗 COLOQUE AQUI A NOVA URL DO GAS
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyVTLBM_yJQad_abVPsg5v2YCr32jDcwk_9M7ODHkQWseqdA9c5zK1E_AOkBdxBuXTrWQ/exec";
+const RESERVA_URL = "https://seusite.com/reservas";
 
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function toJSON(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
 function formatDateInput(d){return d.toISOString().slice(0,10);}
 
 async function carregar(){
   const empresa = document.getElementById('empresaFiltro').value.trim();
   const inicio = document.getElementById('inicio').value;
   const fim = document.getElementById('fim').value;
-  document.getElementById('msg').textContent = 'Carregando aniversariantes...';
+  document.getElementById('msg').textContent = 'Carregando...';
   const tb = document.getElementById('tbody'); tb.innerHTML='';
   try{
     const res = await fetch(GAS_API_URL+"?action=get-birthdays",{
@@ -71,7 +70,7 @@ async function carregar(){
     });
     const data = await res.json();
     if(!data.birthdays || !data.birthdays.length){
-      document.getElementById('msg').textContent = 'Nenhum aniversariante encontrado neste período.';
+      document.getElementById('msg').textContent = 'Nenhum aniversariante encontrado.';
       return;
     }
     document.getElementById('msg').textContent = `${data.birthdays.length} aniversariante(s) encontrado(s).`;
@@ -87,12 +86,12 @@ async function carregar(){
       tb.appendChild(tr);
     });
   }catch(e){
-    document.getElementById('msg').textContent='⚠️ Erro ao carregar: '+e.message;
+    document.getElementById('msg').textContent='⚠️ Erro: '+e.message;
   }
 }
 
 async function enviar(name,birthday,phone){
-  if(!phone){alert("Número de telefone não encontrado.");return;}
+  if(!phone){alert("Telefone ausente.");return;}
   try{
     const res = await fetch(GAS_API_URL+"?action=gen-voucher",{
       method:'POST',
@@ -100,28 +99,26 @@ async function enviar(name,birthday,phone){
       body:JSON.stringify({name,birthday})
     });
     const data = await res.json();
-    const code = data.code || '00000000';
-    const num = phone.replace(/\D/g,'').replace(/^55/,''); // remove espaços, +55 etc.
-    const link = `https://wa.me/55${num}?text=${encodeURIComponent(
+    const code = data.code || '000000';
+    const msg = encodeURIComponent(
 `🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
+
 Como presente, você ganhou um *voucher exclusivo* para usar conosco! 🍽️
 
-🔖 *Código promocional:* ${code}
-📅 Data do seu aniversário: ${birthday}
+🔖 *Código:* ${code}
+📅 Data: ${birthday}
 
-Aproveite e reserve sua mesa clicando abaixo 👇
+Reserve sua mesa clicando abaixo 👇
 ${RESERVA_URL}
 
 Esperamos você! 💚`
-    )}`;
+    );
+    const link = `https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}`;
     window.open(link,'_blank');
-  }catch(e){
-    alert("Erro ao gerar voucher: "+e.message);
-  }
+  }catch(e){alert("Erro ao gerar voucher: "+e.message);}
 }
 
 function resetar(){
-  document.getElementById('empresaFiltro').value='';
   const d=new Date();
   const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
   const fim = new Date(d.getFullYear(), d.getMonth()+1, 0);
@@ -129,7 +126,6 @@ function resetar(){
   document.getElementById('fim').value = formatDateInput(fim);
   carregar();
 }
-
 document.addEventListener('DOMContentLoaded', resetar);
 </script>
 </body>
