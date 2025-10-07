@@ -183,25 +183,31 @@ function filtrar(){
 }
 
 function enviar(nome, aniversario, telefone, empresa, btn){
-  if(!telefone){alert('Telefone não encontrado.');return;}
+  if(!telefone){
+    alert('Telefone não encontrado.');
+    return;
+  }
 
-  // 🔹 Mensagem com link da foto incluído
+  // 🔹 Mensagem com o link de reserva incluído
   const mensagem = [
-    `🎉 Olá ${nome}! Aqui é o *${empresa}*🎉 `,
+    `🎉 Olá ${nome}! Aqui é o *${empresa}*! 🎉`,
     ``,
-    `Venho te deseja um feliz aniversário! 🥂🎂`,
+    `Estamos muito felizes em te desejar um *feliz aniversário!* 🥂🎂`,
     `🎈 Você é nosso convidado especial para comemorar conosco esse mês tão especial!`,
-    `Seu aniversário é dia ${aniversario}, mas... Preparamos um presente que vale pelo mês inteiro`,
     ``,
-    `📍 Faça sua reserva:`,
-
-    `Esperamos por você! ✨`
+    `📅 Seu aniversário é dia *${aniversario}*, mas... preparamos um presente que vale pelo mês inteiro!`,
+    ``,
+    `✨ Faça sua reserva e venha celebrar no *Mercatto Delícia*!`,
+    `👉 [Clique aqui para reservar](https://grupodvbr.github.io/aniversariosmercatto/)`,
+    ``,
+    `Esperamos por você! 💚`
   ].join('\n');
 
-  const fone=telefone.replace(/\D/g,'');
-  const params=new URLSearchParams({text:mensagem});
-  const link=`https://wa.me/${fone}?${params.toString()}`;
-  window.open(link,'_blank');
+  // 🔹 Formatar telefone (remove caracteres e abre o WhatsApp)
+  const numero = telefone.replace(/\D/g, '');
+  const link = `https://wa.me/55${numero}?text=${encodeURIComponent(mensagem)}`;
+  window.open(link, '_blank');
+}
 
   btn.classList.add('sent');
   if(!enviados.includes(nome+aniversario)){
