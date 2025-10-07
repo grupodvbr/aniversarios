@@ -49,9 +49,9 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 <footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
 
 <script>
-// 🔗 SEU LINK DO GAS
+// 🔗 COLOQUE AQUI O LINK DO SEU GAS (terminando com /exec)
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
-const RESERVA_URL = "https://grupodvbr.github.io/aniversariosmercatto/"; // link WhatsApp reservas
+const RESERVA_URL = "https://wa.me/5577999999999"; // link do WhatsApp para reservas
 
 let aniversariantes = [];
 
@@ -78,7 +78,7 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    // Gerar lista única de empresas
+    // Empresas únicas
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     empresaSel.innerHTML='<option value="">Todas as empresas</option>'+
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
@@ -100,7 +100,7 @@ function renderizar(lista){
       <td>${esc(a.nome)}</td>
       <td>${a.aniversario}</td>
       <td>${esc(a.sugestao)}</td>
-      <td><button onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}')">🎁 WhatsApp</button></td>
+      <td><button onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}','${a.empresa}')">🎁 WhatsApp</button></td>
     `;
     tb.appendChild(tr);
   });
@@ -113,12 +113,10 @@ function filtrar(){
 
   let filtrados=aniversariantes;
 
-  // Filtro empresa
   if(empresa){
     filtrados=filtrados.filter(a=>a.empresa===empresa);
   }
 
-  // Filtro data
   if(inicio && fim){
     const ini=new Date(inicio);
     const f=new Date(fim);
@@ -132,35 +130,30 @@ function filtrar(){
   renderizar(filtrados);
 }
 
-function enviar(nome, aniversario, telefone) {
+// ✅ Função corrigida (mensagem 100% visível no WhatsApp)
+function enviar(nome, aniversario, telefone, empresa) {
   if (!telefone) {
     alert('Telefone não encontrado.');
     return;
   }
 
-  // Mensagem base
   const mensagem = [
-    `🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂`,
+    `🎉 Olá ${nome}! Aqui é o *${empresa}* 💚`,
     ``,
-    `🎈 Você é nosso convidado especial para comemorar conosco! 💚`,
+    `O Mercatto Delícia deseja um feliz aniversário! 🥂🎂`,
+    `🎈 Você é nosso convidado especial para comemorar conosco!`,
     `📅 Seu aniversário: ${aniversario}`,
     `📍 Faça sua reserva agora:`,
     `${RESERVA_URL}`,
     ``,
     `Esperamos por você! ✨`
-  ].join('\n'); // mantém quebras de linha corretas
+  ].join('\n');
 
-  // Remove tudo que não for número
   const fone = telefone.replace(/\D/g, '');
-
-  // Usa URLSearchParams para construir a URL corretamente
   const params = new URLSearchParams({ text: mensagem });
   const link = `https://wa.me/${fone}?${params.toString()}`;
-
-  // Abre o WhatsApp em nova aba
   window.open(link, '_blank');
 }
-
 
 function resetar(){
   const d=new Date();
