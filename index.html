@@ -34,7 +34,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   <section class="card">
     <h2 style="margin:0 0 12px 0;font-size:1.1rem">Conexões</h2>
     <div class="grid cols-2">
-      <div><label>Endpoint Apps Script (planilha)</label><input id="GAS_API_URL" placeholder="https://script.google.com/macros/s/AKfycbxl27G0ocphAeW8aAWfOvUfbN40xKQSrZT9WAZgLwWleGkkS286J7KyMFsGphZD_Fvk8g/exec"></div>
+      <div><label>Endpoint Apps Script (planilha)</label><input id="GAS_API_URL" placeholder="https://script.google.com/macros/s/AKfycbzJYCernywsnP9N0CwSRdNC8AQ0NkDdV5_Xf2bZf0dFUD_zNt8SZU5E0DSMV5spvS6ScQ/exec"></div>
       <div>
   <label>Endpoint Vercel (WhatsApp)</label>
   <input id="VERCEL_API_URL" value="https://aniversarios-blond.vercel.app/api/send-birthday">
@@ -104,74 +104,92 @@ function setStatus(msg){ $('appStatus').textContent = msg; }
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function toJSON(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
 
-function gas(url,action,body={}){ return fetch(`${url}?action=${encodeURIComponent(action)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(toJSON); }
+function gas(url,action,body={}){ 
+  return fetch(`${url}?action=${encodeURIComponent(action)}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  }).then(toJSON); 
+}
 
 async function load(){
   setStatus('carregando…');
   try{
     const gasUrl = $('GAS_API_URL').value.trim();
     if(!gasUrl){ setStatus('informe o Apps Script'); return; }
-    const data = await gas(gasUrl,'ui-data');
-    const c = data.config||{};
-    $('active').value = c.active?'true':'false';
-    $('send_hour').value = c.send_hour ?? 9;
-    $('timezone').value = c.timezone || 'America/Bahia';
-    $('days_before').value = c.days_before ?? 0;
-    $('preview_window_days').value = c.preview_window_days ?? 30;
-    $('company_filter').value = c.company_filter || '';
-    $('reserva_url').value = c.reserva_url || '';
-    $('info_url').value = c.info_url || '';
-    $('last_run').value = c.last_run ? new Date(c.last_run).toLocaleString() : '—';
-    $('trigger_status').value = data.haveTrigger ? 'Ativo' : 'Inexistente';
-    renderTable(data.upcoming||[]);
+    // busca os aniversariantes do mês atual
+    const data = await gas(gasUrl,'get-birthdays');
+    renderTable(data.birthdays || []);
     setStatus('pronto');
-  }catch(e){ setStatus('erro'); alert('Erro ao carregar: '+e.message); }
+  }catch(e){
+    setStatus('erro');
+    alert('Erro ao carregar: '+e.message);
+  }
 }
 
 function renderTable(rows){
-  $('countBadge').textContent = rows.length+' itens';
+  $('countBadge').textContent = rows.length+' aniversariantes';
   const tb=$('tbody'); tb.innerHTML='';
   rows.forEach(r=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td>${esc(r.name)}</td><td>${esc(r.empresa||'')}</td>
+      <td>${esc(r.name)}</td>
+      <td>${esc(r.empresa||'')}</td>
       <td><span class="tag">${esc(r.phoneE164||r.phoneRaw||'')}</span></td>
-      <td>${esc(r.birthday)}</td><td>${r.daysToBirthday}</td>
-      <td>${r.sentThisYear?'✅':'—'}</td>
-      <td><button class="secondary" onclick="sendOne(${r.rowIndex},this)">Enviar agora</button></td>`;
+      <td>${esc(r.birthday)}</td>
+      <td>${r.daysToBirthday}</td>
+      <td>—</td>
+      <td><button class="secondary" onclick="sendOne('${r.phoneE164||r.phoneRaw}','${esc(r.name)}',this)">Enviar agora</button></td>
+    `;
     tb.appendChild(tr);
   });
 }
 
-async function saveConfig(){
-  $('cfgMsg').textContent='salvando…';
+async function sendOne(phone,name,btn){
+  const api = $('VERCEL_API_URL').value.trim();
+  if(!api){ alert('Informe o endpoint Vercel.'); return; }
+  const reservaUrl = $('reserva_url').value.trim() || '';
+  const msg = `🎉 Olá ${name}! O Mercatto deseja um feliz aniversário cheio de momentos deliciosos! 🥂🎂
+  
+Aproveite para comemorar com a gente! Reserve sua mesa clicando abaixo 👇
+${reservaUrl}`;
+  btn.disabled=true;
+  btn.textContent='Enviando…';
   try{
-    const cfg={
-      active:$('active').value==='true',
-      send_hour:Number($('send_hour').value||9),
-      timezone:$('timezone').value||'America/Bahia',
-      days_before:Number($('days_before').value||0),
-      preview_window_days:Number($('preview_window_days').value||30),
-      company_filter:$('company_filter').value||'',
-      reserva_url:$('reserva_url').value||'',
-      info_url:$('info_url').value||'',
-      vercel_endpoint:$('VERCEL_API_URL').value.trim()
-    };
-    await gas($('GAS_API_URL').value.trim(),'save-config',{config:cfg});
-    $('cfgMsg').textContent='Salvo e gatilho sincronizado.'; load();
-  }catch(e){ $('cfgMsg').textContent='Erro: '+e.message; }
+    await fetch(api,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({to:phone,name,message:msg})
+    }).then(toJSON);
+    btn.textContent='Enviado ✅';
+  }catch(e){
+    btn.textContent='Erro ❌';
+    alert('Falha no envio: '+e.message);
+  }
 }
-async function syncTrigger(){ $('cfgMsg').textContent='sincronizando…'; try{await gas($('GAS_API_URL').value.trim(),'sync-trigger'); $('cfgMsg').textContent='Gatilho ok.'; load();}catch(e){$('cfgMsg').textContent='Erro: '+e.message;}}
-async function runNow(){ $('cfgMsg').textContent='executando…'; try{await gas($('GAS_API_URL').value.trim(),'run-now'); $('cfgMsg').textContent='Concluído.'; load();}catch(e){$('cfgMsg').textContent='Erro: '+e.message;} }
-async function sendOne(rowIndex,btn){ const old=btn.textContent; btn.disabled=true; btn.textContent='Enviando…'; try{await gas($('GAS_API_URL').value.trim(),'send-one',{rowIndex}); btn.textContent='Enviado ✅'; setTimeout(load,600);}catch(e){btn.disabled=false;btn.textContent=old;alert('Erro: '+e.message);} }
-async function sendTest(){ const api=$('VERCEL_API_URL').value.trim(); const name=$('test_name').value.trim()||'Cliente Teste'; const to=$('test_phone').value.trim(); if(!api){$('testMsg').textContent='Informe o endpoint Vercel.';return;} $('testMsg').textContent='enviando…'; try{const r=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,name,reservaUrl:$('reserva_url').value,infoUrl:$('info_url').value})}).then(toJSON); $('testMsg').textContent='OK';}catch(e){$('testMsg').textContent='Erro: '+e.message;} }
 
-document.addEventListener('DOMContentLoaded', ()=>{
-  // se você quiser deixar pré-preenchido, coloque suas URLs abaixo:
-  // $('GAS_API_URL').value = 'https://SEU-APPS-SCRIPT/exec';
-  // $('VERCEL_API_URL').value = 'https://seu-projeto.vercel.app/api/send-birthday';
-  load();
-});
+async function sendTest(){
+  const api=$('VERCEL_API_URL').value.trim();
+  const name=$('test_name').value.trim()||'Cliente Teste';
+  const to=$('test_phone').value.trim();
+  if(!api){$('testMsg').textContent='Informe o endpoint Vercel.';return;}
+  $('testMsg').textContent='enviando…';
+  const reservaUrl=$('reserva_url').value||'';
+  const msg=`🎉 Olá ${name}! Feliz aniversário! 🎂🥂 Reserve sua comemoração aqui: ${reservaUrl}`;
+  try{
+    await fetch(api,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({to,name,message:msg})
+    }).then(toJSON);
+    $('testMsg').textContent='Mensagem enviada com sucesso ✅';
+  }catch(e){
+    $('testMsg').textContent='Erro: '+e.message;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', ()=> load());
 </script>
+
 </body>
 </html>
