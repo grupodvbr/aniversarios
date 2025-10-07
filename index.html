@@ -16,10 +16,12 @@ h1{text-align:center;margin:0 0 12px;font-size:1.6rem}
 table{width:100%;border-collapse:collapse;margin-top:10px}
 th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-weight:500}
-button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#001a0c;font-weight:600;cursor:pointer}
+button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#001a0c;font-weight:600;cursor:pointer;transition:opacity .2s;}
+button:hover{opacity:0.85}
 .filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;justify-content:center}
 input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 #msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
+footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 </style>
 </head>
 <body>
@@ -34,7 +36,7 @@ input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);b
       <button onclick="carregar()">🔍 Filtrar</button>
       <button onclick="resetar()">♻️ Mês atual</button>
     </div>
-    <div id="msg">Carregando aniversariantes...</div>
+    <div id="msg">Buscando aniversariantes...</div>
     <table>
       <thead>
         <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Sugestão</th><th>Ações</th></tr>
@@ -44,8 +46,10 @@ input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);b
   </div>
 </div>
 
+<footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
+
 <script>
-// 🔗 COLOQUE AQUI SEU ENDPOINT DO GOOGLE APPS SCRIPT
+// 🔗 SEU ENDPOINT DO GOOGLE APPS SCRIPT
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx5G7WqVgZOEqiLkxPJwCYvmGp3DMb9gIWriJEFYCnquOpCtNnqcb_uwKkHdXvNbocj5w/exec";
 const RESERVA_URL = "https://seusite.com/reservas";
 
@@ -57,7 +61,7 @@ async function carregar(){
   const empresa = document.getElementById('empresaFiltro').value.trim();
   const inicio = document.getElementById('inicio').value;
   const fim = document.getElementById('fim').value;
-  document.getElementById('msg').textContent = 'Carregando...';
+  document.getElementById('msg').textContent = 'Carregando aniversariantes...';
   const tb = document.getElementById('tbody'); tb.innerHTML='';
   try{
     const res = await fetch(GAS_API_URL+"?action=get-birthdays",{
@@ -67,7 +71,7 @@ async function carregar(){
     });
     const data = await res.json();
     if(!data.birthdays || !data.birthdays.length){
-      document.getElementById('msg').textContent = 'Nenhum aniversariante encontrado.';
+      document.getElementById('msg').textContent = 'Nenhum aniversariante encontrado neste período.';
       return;
     }
     document.getElementById('msg').textContent = `${data.birthdays.length} aniversariante(s) encontrado(s).`;
@@ -83,11 +87,12 @@ async function carregar(){
       tb.appendChild(tr);
     });
   }catch(e){
-    document.getElementById('msg').textContent='Erro ao carregar: '+e.message;
+    document.getElementById('msg').textContent='⚠️ Erro ao carregar: '+e.message;
   }
 }
 
 async function enviar(name,birthday,phone){
+  if(!phone){alert("Número de telefone não encontrado.");return;}
   try{
     const res = await fetch(GAS_API_URL+"?action=gen-voucher",{
       method:'POST',
@@ -96,7 +101,9 @@ async function enviar(name,birthday,phone){
     });
     const data = await res.json();
     const code = data.code || '00000000';
-    const msg = encodeURIComponent(`🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
+    const num = phone.replace(/\D/g,'').replace(/^55/,'');
+    const link = `https://wa.me/55${num}?text=${encodeURIComponent(
+`🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
 Como presente, você ganhou um *voucher exclusivo* para usar conosco! 🍽️
 
 🔖 *Código promocional:* ${code}
@@ -105,10 +112,12 @@ Como presente, você ganhou um *voucher exclusivo* para usar conosco! 🍽️
 Aproveite e reserve sua mesa clicando abaixo 👇
 ${RESERVA_URL}
 
-Esperamos você! 💚`);
-    const link = `https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}`;
+Esperamos você! 💚`
+    )}`;
     window.open(link,'_blank');
-  }catch(e){alert("Erro ao gerar voucher: "+e.message);}
+  }catch(e){
+    alert("Erro ao gerar voucher: "+e.message);
+  }
 }
 
 function resetar(){
