@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🎉 Aniversariantes • Mercatto Delícia</title>
+<title>🎉 Aniversariantes do Mês • Mercatto Delícia</title>
 <style>
 :root{
   --bg:#0b1220;--card:#111827;--line:#1f2937;
-  --text:#e5e7eb;--muted:#9ca3af;--brand:#22c55e;--accent:#60a5fa;
+  --text:#e5e7eb;--muted:#9ca3af;--brand:#22c55e;
 }
 body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
 .container{max-width:1000px;margin:24px auto;padding:0 16px}
@@ -16,8 +16,8 @@ h1{text-align:center;margin:0 0 12px;font-size:1.6rem}
 table{width:100%;border-collapse:collapse;margin-top:10px}
 th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-weight:500}
-button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#021a08;font-weight:600;cursor:pointer}
-.filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#001a0c;font-weight:600;cursor:pointer}
+.filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;justify-content:center}
 input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 #msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
 </style>
@@ -28,7 +28,7 @@ input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);b
 
   <div class="card">
     <div class="filter">
-      <input type="text" id="empresaFiltro" placeholder="Filtrar empresa (ex: MERCATTO DELÍCIA)">
+      <input type="text" id="empresaFiltro" placeholder="Filtrar empresa (ex: MERCATTO DELÍCIA)" style="min-width:220px">
       <label>De: <input type="date" id="inicio"></label>
       <label>Até: <input type="date" id="fim"></label>
       <button onclick="carregar()">🔍 Filtrar</button>
@@ -45,8 +45,9 @@ input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);b
 </div>
 
 <script>
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx5G7WqVgZOEqiLkxPJwCYvmGp3DMb9gIWriJEFYCnquOpCtNnqcb_uwKkHdXvNbocj5w/exec"; // substitua pelo seu endpoint
-const RESERVA_URL = "https://aniversarios-blond.vercel.app/";
+// 🔗 COLOQUE AQUI SEU ENDPOINT DO GOOGLE APPS SCRIPT
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx5G7WqVgZOEqiLkxPJwCYvmGp3DMb9gIWriJEFYCnquOpCtNnqcb_uwKkHdXvNbocj5w/exec";
+const RESERVA_URL = "https://seusite.com/reservas";
 
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function toJSON(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
@@ -59,16 +60,18 @@ async function carregar(){
   document.getElementById('msg').textContent = 'Carregando...';
   const tb = document.getElementById('tbody'); tb.innerHTML='';
   try{
-    const r = await fetch(GAS_API_URL+"?action=get-birthdays",{
-      method:'POST',headers:{'Content-Type':'application/json'},
+    const res = await fetch(GAS_API_URL+"?action=get-birthdays",{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({empresa,inicio,fim})
-    }).then(toJSON);
-    if(!r.birthdays || !r.birthdays.length){
+    });
+    const data = await res.json();
+    if(!data.birthdays || !data.birthdays.length){
       document.getElementById('msg').textContent = 'Nenhum aniversariante encontrado.';
       return;
     }
-    document.getElementById('msg').textContent = r.birthdays.length+' aniversariantes encontrados.';
-    r.birthdays.forEach(a=>{
+    document.getElementById('msg').textContent = `${data.birthdays.length} aniversariante(s) encontrado(s).`;
+    data.birthdays.forEach(a=>{
       const tr=document.createElement('tr');
       tr.innerHTML=`
         <td>${esc(a.empresa||'')}</td>
@@ -87,10 +90,12 @@ async function carregar(){
 async function enviar(name,birthday,phone){
   try{
     const res = await fetch(GAS_API_URL+"?action=gen-voucher",{
-      method:'POST',headers:{'Content-Type':'application/json'},
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name,birthday})
-    }).then(toJSON);
-    const code = res.code;
+    });
+    const data = await res.json();
+    const code = data.code || '00000000';
     const msg = encodeURIComponent(`🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
 Como presente, você ganhou um *voucher exclusivo* para usar conosco! 🍽️
 
@@ -108,19 +113,15 @@ Esperamos você! 💚`);
 
 function resetar(){
   document.getElementById('empresaFiltro').value='';
-  document.getElementById('inicio').value='';
-  document.getElementById('fim').value='';
-  carregar();
-}
-
-document.addEventListener('DOMContentLoaded', ()=>{
   const d=new Date();
   const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
   const fim = new Date(d.getFullYear(), d.getMonth()+1, 0);
   document.getElementById('inicio').value = formatDateInput(inicio);
   document.getElementById('fim').value = formatDateInput(fim);
   carregar();
-});
+}
+
+document.addEventListener('DOMContentLoaded', resetar);
 </script>
 </body>
 </html>
