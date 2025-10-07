@@ -132,11 +132,30 @@ function filtrar(){
   renderizar(filtrados);
 }
 
-function enviar(nome,aniversario,telefone){
+function enviar(nome, aniversario, telefone){
   if(!telefone){alert('Telefone não encontrado.');return;}
-  const msg=encodeURIComponent(`🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂\n\n🎈 Você é nosso convidado especial para comemorar conosco! 💚\n\n📅 Seu aniversário: ${aniversario}\n📍 Faça sua reserva agora:\n${RESERVA_URL}\n\nEsperamos por você! ✨`);
-  window.open(`https://wa.me/${telefone.replace(/\D/g,'')}?text=${msg}`,'_blank');
+
+  // Texto da mensagem (sem quebra de linha manual mal interpretada)
+  const mensagem = `
+🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
+
+🎈 Você é nosso convidado especial para comemorar conosco! 💚
+📅 Seu aniversário: ${aniversario}
+📍 Faça sua reserva agora:
+${RESERVA_URL}
+
+Esperamos por você! ✨
+  `.trim();
+
+  // Codifica corretamente toda a mensagem
+  const texto = encodeURIComponent(mensagem);
+
+  // Limpa o telefone e abre o WhatsApp
+  const fone = telefone.replace(/\D/g, '');
+  const link = `https://wa.me/${fone}?text=${texto}`;
+  window.open(link, '_blank');
 }
+
 
 function resetar(){
   const d=new Date();
