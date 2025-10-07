@@ -1,62 +1,95 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Aniversariantes • Mercatto</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🎉 Aniversariantes • Mercatto Delícia</title>
 <style>
-:root{--bg:#0b1220;--card:#111827;--ink:#e5e7eb;--line:#1f2937;--accent:#22c55e;}
-body{margin:0;font-family:system-ui;background:var(--bg);color:var(--ink);}
-.container{max-width:900px;margin:20px auto;padding:10px;}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;}
-h1{margin:0 0 12px;font-size:1.4rem;text-align:center}
-table{width:100%;border-collapse:collapse}
+:root{
+  --bg:#0b1220;--card:#111827;--line:#1f2937;
+  --text:#e5e7eb;--muted:#9ca3af;--brand:#22c55e;--accent:#60a5fa;
+}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+.container{max-width:1000px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+h1{text-align:center;margin:0 0 12px;font-size:1.6rem}
+table{width:100%;border-collapse:collapse;margin-top:10px}
 th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
-button{background:var(--accent);border:none;padding:8px 14px;border-radius:8px;color:#001a09;font-weight:600;cursor:pointer}
+th{color:var(--muted);font-weight:500}
+button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#021a08;font-weight:600;cursor:pointer}
+.filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+#msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🎉 Aniversariantes do Mês • Mercatto Delícia</h1>
+
   <div class="card">
+    <div class="filter">
+      <input type="text" id="empresaFiltro" placeholder="Filtrar empresa (ex: MERCATTO DELÍCIA)">
+      <label>De: <input type="date" id="inicio"></label>
+      <label>Até: <input type="date" id="fim"></label>
+      <button onclick="carregar()">🔍 Filtrar</button>
+      <button onclick="resetar()">♻️ Mês atual</button>
+    </div>
+    <div id="msg">Carregando aniversariantes...</div>
     <table>
-      <thead><tr><th>Nome</th><th>Aniversário</th><th>Sugestão</th><th>Ações</th></tr></thead>
+      <thead>
+        <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Sugestão</th><th>Ações</th></tr>
+      </thead>
       <tbody id="tbody"></tbody>
     </table>
   </div>
 </div>
 
 <script>
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqhmbPYmapS1ZJiu5R6Yg4rNTP-objVo-PeDqT4hrvXPohgRuhy6DrPG_7h7QCnGeeCw/exec"; // seu endpoint aqui
-const RESERVA_URL = "https://grupodvbr.github.io/aniversariosmercatto/"; // link fixo
+const GAS_API_URL = "https://script.google.com/macros/s/AKfyc.../exec"; // substitua pelo seu endpoint
+const RESERVA_URL = "https://seusite.com/reservas";
 
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function toJSON(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+function formatDateInput(d){return d.toISOString().slice(0,10);}
 
-async function load(){
-  const data = await fetch(GAS_API_URL+"?action=get-birthdays",{method:'POST'}).then(toJSON);
-  const tb = document.getElementById('tbody');
-  tb.innerHTML = '';
-  data.birthdays.forEach(r=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${esc(r.name)}</td>
-      <td>${r.birthday}</td>
-      <td>${esc(r.sugestao)}</td>
-      <td><button onclick="enviar('${r.name}','${r.birthday}','${r.phoneRaw}')">🎁 Enviar via WhatsApp</button></td>
-    `;
-    tb.appendChild(tr);
-  });
+async function carregar(){
+  const empresa = document.getElementById('empresaFiltro').value.trim();
+  const inicio = document.getElementById('inicio').value;
+  const fim = document.getElementById('fim').value;
+  document.getElementById('msg').textContent = 'Carregando...';
+  const tb = document.getElementById('tbody'); tb.innerHTML='';
+  try{
+    const r = await fetch(GAS_API_URL+"?action=get-birthdays",{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({empresa,inicio,fim})
+    }).then(toJSON);
+    if(!r.birthdays || !r.birthdays.length){
+      document.getElementById('msg').textContent = 'Nenhum aniversariante encontrado.';
+      return;
+    }
+    document.getElementById('msg').textContent = r.birthdays.length+' aniversariantes encontrados.';
+    r.birthdays.forEach(a=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td>${esc(a.empresa||'')}</td>
+        <td>${esc(a.name)}</td>
+        <td>${a.birthday}</td>
+        <td>${esc(a.sugestao)}</td>
+        <td><button onclick="enviar('${a.name}','${a.birthday}','${a.phoneRaw}')">🎁 Enviar via WhatsApp</button></td>
+      `;
+      tb.appendChild(tr);
+    });
+  }catch(e){
+    document.getElementById('msg').textContent='Erro ao carregar: '+e.message;
+  }
 }
 
 async function enviar(name,birthday,phone){
   try{
     const res = await fetch(GAS_API_URL+"?action=gen-voucher",{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name,birthday})
     }).then(toJSON);
-
     const code = res.code;
     const msg = encodeURIComponent(`🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
 Como presente, você ganhou um *voucher exclusivo* para usar conosco! 🍽️
@@ -70,12 +103,24 @@ ${RESERVA_URL}
 Esperamos você! 💚`);
     const link = `https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}`;
     window.open(link,'_blank');
-  }catch(e){
-    alert("Erro ao gerar voucher: "+e.message);
-  }
+  }catch(e){alert("Erro ao gerar voucher: "+e.message);}
 }
 
-document.addEventListener('DOMContentLoaded', load);
+function resetar(){
+  document.getElementById('empresaFiltro').value='';
+  document.getElementById('inicio').value='';
+  document.getElementById('fim').value='';
+  carregar();
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  const d=new Date();
+  const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
+  const fim = new Date(d.getFullYear(), d.getMonth()+1, 0);
+  document.getElementById('inicio').value = formatDateInput(inicio);
+  document.getElementById('fim').value = formatDateInput(fim);
+  carregar();
+});
 </script>
 </body>
 </html>
