@@ -47,7 +47,7 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 <footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
 
 <script>
-// 🔗 COLOQUE AQUI SUA URL DO GAS
+// 🔗 Substitua pelo SEU LINK DO GAS (terminando em /exec)
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzr7IpprDwaZcXG1mXs3ThDn4Vz78uPA3ktjydmGhVo2F175QGNU28HJaeEc70PjD02GQ/exec";
 const RESERVA_URL = "https://seusite.com/reservas";
 
@@ -74,10 +74,18 @@ async function carregar(){
     msg.textContent=`${data.aniversariantes.length} aniversariante(s) encontrado(s).`;
     data.aniversariantes.forEach(a=>{
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${esc(a.empresa)}</td><td>${esc(a.nome)}</td><td>${a.aniversario}</td><td>${esc(a.sugestao)}</td><td><button onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}')">🎁 WhatsApp</button></td>`;
+      tr.innerHTML=`
+        <td>${esc(a.empresa)}</td>
+        <td>${esc(a.nome)}</td>
+        <td>${a.aniversario}</td>
+        <td>${esc(a.sugestao)}</td>
+        <td><button onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}')">🎁 WhatsApp</button></td>
+      `;
       tb.appendChild(tr);
     });
-  }catch(e){msg.textContent='⚠️ Erro: '+e.message;}
+  }catch(e){
+    msg.textContent='⚠️ Erro ao carregar: '+e.message;
+  }
 }
 
 async function enviar(nome,aniversario,telefone){
@@ -92,7 +100,9 @@ async function enviar(nome,aniversario,telefone){
     const codigo=data.codigo||'000000';
     const msg=encodeURIComponent(`🎉 Olá ${nome}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂\n\nVocê ganhou um *voucher exclusivo!* 🍽️\n\n🔖 *Código:* ${codigo}\n📅 *Data:* ${aniversario}\n\nReserve sua mesa 👇\n${RESERVA_URL}\n\nEsperamos você! 💚`);
     window.open(`https://wa.me/${telefone.replace(/\D/g,'')}?text=${msg}`,'_blank');
-  }catch(e){alert('Erro ao gerar voucher: '+e.message);}
+  }catch(e){
+    alert('Erro ao gerar voucher: '+e.message);
+  }
 }
 
 function resetar(){
@@ -103,6 +113,7 @@ function resetar(){
   document.getElementById('fim').value=formatDateInput(fim);
   carregar();
 }
+
 document.addEventListener('DOMContentLoaded',resetar);
 </script>
 </body>
