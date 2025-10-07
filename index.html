@@ -17,7 +17,7 @@ table{width:100%;border-collapse:collapse;margin-top:10px}
 th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-weight:500}
 button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#001a0c;font-weight:600;cursor:pointer;transition:opacity .2s;}
-button:hover{opacity:0.85}
+button:hover{opacity:.85}
 .filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;justify-content:center}
 input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 #msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
@@ -49,9 +49,9 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 <footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
 
 <script>
-// 🔗 SEU ENDPOINT DO GOOGLE APPS SCRIPT
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx5G7WqVgZOEqiLkxPJwCYvmGp3DMb9gIWriJEFYCnquOpCtNnqcb_uwKkHdXvNbocj5w/exec";
-const RESERVA_URL = "https://seusite.com/reservas";
+// 🔗 SEU ENDPOINT GOOGLE APPS SCRIPT
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx3kiXpKYzyGWMdfLV3PNC9AorwqOSBi3MeRhFkTRAvbb52k8EhhxKnHnhAgfdjre5GzA/exec";
+const RESERVA_URL = "https://seusite.com/reservas"; // substitua pelo link de reservas real
 
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function toJSON(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
@@ -101,7 +101,7 @@ async function enviar(name,birthday,phone){
     });
     const data = await res.json();
     const code = data.code || '00000000';
-    const num = phone.replace(/\D/g,'').replace(/^55/,'');
+    const num = phone.replace(/\D/g,'').replace(/^55/,''); // remove espaços, +55 etc.
     const link = `https://wa.me/55${num}?text=${encodeURIComponent(
 `🎉 Olá ${name}! O Mercatto Delícia deseja um feliz aniversário! 🥂🎂
 Como presente, você ganhou um *voucher exclusivo* para usar conosco! 🍽️
