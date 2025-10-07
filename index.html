@@ -19,7 +19,7 @@ th{color:var(--muted);font-weight:500}
 button{background:var(--brand);border:none;border-radius:8px;padding:8px 12px;color:#001a0c;font-weight:600;cursor:pointer;transition:opacity .2s;}
 button:hover{opacity:.85}
 .filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;justify-content:center}
-input{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input,select{background:#0c1322;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 #msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
 footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 </style>
@@ -29,10 +29,12 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
   <h1>🎉 Aniversariantes do Mês • Mercatto Delícia</h1>
   <div class="card">
     <div class="filter">
-      <input type="text" id="empresaFiltro" placeholder="Filtrar empresa (ex: MERCATTO DELÍCIA)" style="min-width:220px">
+      <select id="empresaFiltro">
+        <option value="">Todas as empresas</option>
+      </select>
       <label>De: <input type="date" id="inicio"></label>
       <label>Até: <input type="date" id="fim"></label>
-      <button onclick="carregar()">🔍 Filtrar</button>
+      <button onclick="filtrar()">🔍 Filtrar</button>
       <button onclick="resetar()">♻️ Mês atual</button>
     </div>
     <div id="msg">Carregando aniversariantes...</div>
@@ -47,45 +49,87 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.8rem}
 <footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
 
 <script>
-// 🔗 Substitua pelo SEU LINK DO GAS (terminando em /exec)
+// 🔗 SEU LINK DO GAS (substitua pelo seu URL /exec)
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzr7IpprDwaZcXG1mXs3ThDn4Vz78uPA3ktjydmGhVo2F175QGNU28HJaeEc70PjD02GQ/exec";
 const RESERVA_URL = "https://seusite.com/reservas";
 
+let aniversariantes = [];
+
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function formatDateInput(d){return d.toISOString().slice(0,10);}
+function converterData(diaMes){
+  const [dia,mes]=diaMes.split("/").map(Number);
+  const ano=new Date().getFullYear();
+  return `${ano}-${String(mes).padStart(2,"0")}-${String(dia).padStart(2,"0")}`;
+}
 
 async function carregar(){
-  const empresa=document.getElementById('empresaFiltro').value.trim();
-  const inicio=document.getElementById('inicio').value;
-  const fim=document.getElementById('fim').value;
   const msg=document.getElementById('msg');
   const tb=document.getElementById('tbody');
+  const empresaSel=document.getElementById('empresaFiltro');
   msg.textContent='Carregando...'; tb.innerHTML='';
 
   try{
-    const url=`${GAS_API_URL}?empresa=${encodeURIComponent(empresa)}&inicio=${inicio}&fim=${fim}`;
-    const res=await fetch(url);
+    const res=await fetch(GAS_API_URL);
     const data=await res.json();
+    aniversariantes=data.aniversariantes||[];
 
-    if(!data.aniversariantes||!data.aniversariantes.length){
+    if(!aniversariantes.length){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    msg.textContent=`${data.aniversariantes.length} aniversariante(s) encontrado(s).`;
-    data.aniversariantes.forEach(a=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td>${esc(a.empresa)}</td>
-        <td>${esc(a.nome)}</td>
-        <td>${a.aniversario}</td>
-        <td>${esc(a.sugestao)}</td>
-        <td><button onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}')">🎁 WhatsApp</button></td>
-      `;
-      tb.appendChild(tr);
-    });
+    // Gerar lista única de empresas
+    const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
+    empresaSel.innerHTML='<option value="">Todas as empresas</option>'+
+      empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
+
+    msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
+    renderizar(aniversariantes);
   }catch(e){
-    msg.textContent='⚠️ Erro ao carregar: '+e.message;
+    msg.textContent='⚠️ Erro: '+e.message;
   }
+}
+
+function renderizar(lista){
+  const tb=document.getElementById('tbody');
+  tb.innerHTML='';
+  lista.forEach(a=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${esc(a.empresa)}</td>
+      <td>${esc(a.nome)}</td>
+      <td>${a.aniversario}</td>
+      <td>${esc(a.sugestao)}</td>
+      <td><button onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}')">🎁 WhatsApp</button></td>
+    `;
+    tb.appendChild(tr);
+  });
+}
+
+function filtrar(){
+  const empresa=document.getElementById('empresaFiltro').value;
+  const inicio=document.getElementById('inicio').value;
+  const fim=document.getElementById('fim').value;
+
+  let filtrados=aniversariantes;
+
+  // Filtro empresa
+  if(empresa){
+    filtrados=filtrados.filter(a=>a.empresa===empresa);
+  }
+
+  // Filtro data
+  if(inicio && fim){
+    const ini=new Date(inicio);
+    const f=new Date(fim);
+    filtrados=filtrados.filter(a=>{
+      const conv=new Date(converterData(a.aniversario));
+      return conv>=ini && conv<=f;
+    });
+  }
+
+  document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
+  renderizar(filtrados);
 }
 
 async function enviar(nome,aniversario,telefone){
@@ -111,10 +155,10 @@ function resetar(){
   const fim=new Date(d.getFullYear(),d.getMonth()+1,0);
   document.getElementById('inicio').value=formatDateInput(inicio);
   document.getElementById('fim').value=formatDateInput(fim);
-  carregar();
+  filtrar();
 }
 
-document.addEventListener('DOMContentLoaded',resetar);
+document.addEventListener('DOMContentLoaded',carregar);
 </script>
 </body>
 </html>
