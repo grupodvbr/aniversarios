@@ -103,6 +103,7 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
+// 🔹 Escapa texto HTML
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 
 // 🔹 Formata número no padrão 55 + DDD + número sem o 9
@@ -116,6 +117,7 @@ function formatarTelefone(num){
   return `55${ddd}${base}`;
 }
 
+// 🔹 Carrega todos os aniversariantes da planilha
 async function carregar(){
   const msg=document.getElementById('msg');
   const tb=document.getElementById('tbody');
@@ -129,13 +131,13 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    // Filtro empresas
+    // 🔹 Popula filtro de empresas
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     document.getElementById('empresaFiltro').innerHTML=
       '<option value="">Todas as empresas</option>'+
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    // Filtro meses
+    // 🔹 Popula filtro de meses
     const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
     const mesSel=document.getElementById('mesFiltro');
     mesSel.innerHTML='<option value="">Todos os meses</option>'+
@@ -144,10 +146,11 @@ async function carregar(){
     msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
     renderizar(aniversariantes);
   }catch(e){
-    msg.textContent='⚠️ Erro: '+e.message;
+    msg.textContent='⚠️ Erro ao carregar: '+e.message;
   }
 }
 
+// 🔹 Filtro manual
 function filtrar(){
   const empresa=document.getElementById('empresaFiltro').value;
   const mesEscolhido=parseInt(document.getElementById('mesFiltro').value);
@@ -160,14 +163,14 @@ function filtrar(){
     filtrados=filtrados.filter(a=>{
       const partes=a.aniversario?.split('/');
       if(!partes || partes.length<2) return false;
-      const mes=parseInt(partes[1]);
-      return mes===mesEscolhido;
+      return parseInt(partes[1])===mesEscolhido;
     });
 
   document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
   renderizar(filtrados);
 }
 
+// 🔹 Exibe na tela
 function renderizar(lista){
   const tb=document.getElementById('tbody');
   const mob=document.getElementById('mobileList');
@@ -209,6 +212,7 @@ function renderizar(lista){
   });
 }
 
+// 🔹 WhatsApp
 function enviar(nome, aniversario, telefone, empresa, btn){
   if(!telefone){alert('Telefone não encontrado.');return;}
   const mensagem = [
