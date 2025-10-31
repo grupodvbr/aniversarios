@@ -25,10 +25,10 @@ h1{text-align:center;margin:0 0 12px;font-size:1.3rem}
   display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;
   justify-content:center
 }
-input,select,button{
+select,button{
   border-radius:8px;padding:8px 10px;font-size:.9rem
 }
-input,select{
+select{
   background:#0c1322;color:var(--text);
   border:1px solid var(--line);
 }
@@ -74,9 +74,11 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
   <div class="card">
     <div class="filter">
       <select id="empresaFiltro"><option value="">Todas as empresas</option></select>
-      <button onclick="resetar()">♻️ Atualizar mês</button>
+      <select id="mesFiltro"></select>
+      <button onclick="filtrar()">🔍 Filtrar</button>
+      <button onclick="resetar()">♻️ Mês atual</button>
     </div>
-    <div id="msg">Carregando aniversariantes do mês...</div>
+    <div id="msg">Carregando aniversariantes...</div>
     <table id="tabela">
       <thead>
         <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Telefone</th><th>Ações</th></tr>
@@ -94,17 +96,7 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
-// Escapar texto seguro
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-
-// Converte "DD/MM" para data no ano atual
-function converterData(diaMes){
-  const [dia,mes]=diaMes.split("/").map(Number);
-  const ano=new Date().getFullYear();
-  return new Date(ano, mes-1, dia);
-}
-
-// Formata número no padrão 55 + DDD + número sem 9
 function formatarTelefone(num){
   const digits = num.replace(/\D/g,"");
   if(digits.length < 10) return digits;
@@ -113,7 +105,6 @@ function formatarTelefone(num){
   return `55${ddd}${base}`;
 }
 
-// Carrega apenas aniversariantes do mês atual
 async function carregar(){
   const msg=document.getElementById('msg');
   const tb=document.getElementById('tbody');
@@ -127,23 +118,40 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    // Filtro: apenas mês atual
-    const mesAtual = new Date().getMonth()+1;
-    aniversariantes = aniversariantes.filter(a=>{
-      const [d,m] = a.aniversario.split('/').map(Number);
-      return m === mesAtual;
-    });
-
+    // Popula filtro de empresas
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     document.getElementById('empresaFiltro').innerHTML=
       '<option value="">Todas as empresas</option>'+
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    msg.textContent=`${aniversariantes.length} aniversariante(s) deste mês.`;
-    renderizar(aniversariantes);
+    // Popula filtro de meses
+    const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    const mesAtual=new Date().getMonth();
+    const mesSel=document.getElementById('mesFiltro');
+    mesSel.innerHTML=meses.map((m,i)=>`<option value="${i+1}" ${i===mesAtual?'selected':''}>${m}</option>`).join('');
+
+    msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
+    filtrar();
   }catch(e){
     msg.textContent='⚠️ Erro: '+e.message;
   }
+}
+
+function filtrar(){
+  const empresa=document.getElementById('empresaFiltro').value;
+  const mesEscolhido=parseInt(document.getElementById('mesFiltro').value);
+  let filtrados=aniversariantes;
+
+  if(empresa) filtrados=filtrados.filter(a=>a.empresa===empresa);
+  if(mesEscolhido){
+    filtrados=filtrados.filter(a=>{
+      const [,m]=a.aniversario.split('/').map(Number);
+      return m===mesEscolhido;
+    });
+  }
+
+  document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
+  renderizar(filtrados);
 }
 
 function renderizar(lista){
@@ -182,9 +190,9 @@ function enviar(nome, aniversario, telefone, empresa, btn){
   const mensagem = [
     `🎉 Olá ${nome}! Aqui é o *${empresa}* 💚`,
     ``,
-    `O Venho te desejar um feliz aniversário! 🥂🎂`,
+    `Viemos te desejar um feliz aniversário! 🥂🎂`,
     `🎈 Você é nosso convidado especial para comemorar conosco esse mês tão especial!`,
-    `📅 Seu aniversário é dia ${aniversario}, mas preparamos um presente que vale o mês inteiro.`,
+    `📅 Seu aniversário é dia ${aniversario}, e preparamos um presente que vale o mês inteiro.`,
     ``,
     `📍 Faça sua reserva conosco.`,
     `Esperamos por você! ✨`
@@ -201,7 +209,9 @@ function enviar(nome, aniversario, telefone, empresa, btn){
 }
 
 function resetar(){
-  carregar();
+  const mesAtual=new Date().getMonth()+1;
+  document.getElementById('mesFiltro').value=mesAtual;
+  filtrar();
 }
 
 document.addEventListener('DOMContentLoaded',carregar);
