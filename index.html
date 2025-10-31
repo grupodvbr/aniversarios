@@ -15,7 +15,7 @@ body{
   font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
   background:var(--bg);color:var(--text);
 }
-.container{max-width:1000px;margin:16px auto;padding:0 12px}
+.container{max-width:1100px;margin:16px auto;padding:0 12px}
 .card{
   background:var(--card);border:1px solid var(--line);
   border-radius:12px;padding:16px;
@@ -51,7 +51,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
 /* ---------- Desktop tabela ---------- */
 @media(min-width:700px){
   table{width:100%;border-collapse:collapse;margin-top:10px}
-  th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
+  th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--muted);font-weight:500}
 }
 
@@ -80,7 +80,16 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
     <div id="msg">Carregando aniversariantes...</div>
     <table id="tabela">
       <thead>
-        <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Telefone</th><th>Ações</th></tr>
+        <tr>
+          <th>Empresa</th>
+          <th>Nome</th>
+          <th>Aniversário</th>
+          <th>Telefone</th>
+          <th>Sugestão</th>
+          <th>Observação</th>
+          <th>Cargo</th>
+          <th>Ações</th>
+        </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -91,11 +100,9 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
-
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
-// Escapa texto para HTML seguro
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 
 // 🔹 Formata número no padrão 55 + DDD + número sem o 9
@@ -122,13 +129,13 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    // 🔹 Popula filtro de empresas
+    // Filtro empresas
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     document.getElementById('empresaFiltro').innerHTML=
       '<option value="">Todas as empresas</option>'+
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    // 🔹 Popula filtro de meses
+    // Filtro meses
     const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
     const mesSel=document.getElementById('mesFiltro');
     mesSel.innerHTML='<option value="">Todos os meses</option>'+
@@ -151,8 +158,8 @@ function filtrar(){
 
   if(mesEscolhido)
     filtrados=filtrados.filter(a=>{
-      const partes=a.aniversario.split('/');
-      if(partes.length<2) return false;
+      const partes=a.aniversario?.split('/');
+      if(!partes || partes.length<2) return false;
       const mes=parseInt(partes[1]);
       return mes===mesEscolhido;
     });
@@ -165,16 +172,23 @@ function renderizar(lista){
   const tb=document.getElementById('tbody');
   const mob=document.getElementById('mobileList');
   tb.innerHTML=''; mob.innerHTML='';
+
   lista.forEach(a=>{
     const sent=enviados.includes(a.nome+a.aniversario);
     const fone=formatarTelefone(a.telefone||"");
+    const sugestao=a.sugestao||"";
+    const obs=a.observacao||a.obs||"";
+    const cargo=a.cargo||a.funcao||"";
 
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${esc(a.empresa)}</td>
       <td>${esc(a.nome)}</td>
-      <td>${a.aniversario}</td>
+      <td>${a.aniversario||""}</td>
       <td>${fone}</td>
+      <td>${esc(sugestao)}</td>
+      <td>${esc(obs)}</td>
+      <td>${esc(cargo)}</td>
       <td><button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">🎁 WhatsApp</button></td>
     `;
     tb.appendChild(tr);
@@ -184,8 +198,11 @@ function renderizar(lista){
     card.innerHTML=`
       <div><strong>Empresa:</strong> ${esc(a.empresa)}</div>
       <div><strong>Nome:</strong> ${esc(a.nome)}</div>
-      <div><strong>Aniversário:</strong> ${a.aniversario}</div>
+      <div><strong>Aniversário:</strong> ${a.aniversario||""}</div>
       <div><strong>Telefone:</strong> ${fone}</div>
+      ${sugestao?`<div><strong>Sugestão:</strong> ${esc(sugestao)}</div>`:""}
+      ${obs?`<div><strong>Observação:</strong> ${esc(obs)}</div>`:""}
+      ${cargo?`<div><strong>Cargo:</strong> ${esc(cargo)}</div>`:""}
       <button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">🎁 WhatsApp</button>
     `;
     mob.appendChild(card);
