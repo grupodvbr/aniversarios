@@ -74,15 +74,12 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
   <div class="card">
     <div class="filter">
       <select id="empresaFiltro"><option value="">Todas as empresas</option></select>
-      <input type="date" id="inicio">
-      <input type="date" id="fim">
-      <button onclick="filtrar()">🔍 Filtrar</button>
-      <button onclick="resetar()">♻️ Mês atual</button>
+      <button onclick="resetar()">♻️ Atualizar mês</button>
     </div>
-    <div id="msg">Carregando aniversariantes...</div>
+    <div id="msg">Carregando aniversariantes do mês...</div>
     <table id="tabela">
       <thead>
-        <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Sugestão</th><th>Ações</th></tr>
+        <tr><th>Empresa</th><th>Nome</th><th>Aniversário</th><th>Telefone</th><th>Ações</th></tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -93,22 +90,30 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
-const RESERVA_URL = "https://grupodvbr.github.io/aniversariosmercatto/";
-
-// 🔹 URL da imagem do convite
-const FOTO_URL = "https://github.com/grupodvbr/aniversarios/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_4efd54f3.jpg?raw=true";
 
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
+// Escapar texto seguro
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function formatDateInput(d){return d.toISOString().slice(0,10);}
+
+// Converte "DD/MM" para data no ano atual
 function converterData(diaMes){
   const [dia,mes]=diaMes.split("/").map(Number);
   const ano=new Date().getFullYear();
-  return `${ano}-${String(mes).padStart(2,"0")}-${String(dia).padStart(2,"0")}`;
+  return new Date(ano, mes-1, dia);
 }
 
+// Formata número no padrão 55 + DDD + número sem 9
+function formatarTelefone(num){
+  const digits = num.replace(/\D/g,"");
+  if(digits.length < 10) return digits;
+  const ddd = digits.slice(0,2);
+  const base = digits.slice(3); // remove o 9
+  return `55${ddd}${base}`;
+}
+
+// Carrega apenas aniversariantes do mês atual
 async function carregar(){
   const msg=document.getElementById('msg');
   const tb=document.getElementById('tbody');
@@ -122,12 +127,19 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
+    // Filtro: apenas mês atual
+    const mesAtual = new Date().getMonth()+1;
+    aniversariantes = aniversariantes.filter(a=>{
+      const [d,m] = a.aniversario.split('/').map(Number);
+      return m === mesAtual;
+    });
+
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     document.getElementById('empresaFiltro').innerHTML=
       '<option value="">Todas as empresas</option>'+
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
+    msg.textContent=`${aniversariantes.length} aniversariante(s) deste mês.`;
     renderizar(aniversariantes);
   }catch(e){
     msg.textContent='⚠️ Erro: '+e.message;
@@ -140,13 +152,15 @@ function renderizar(lista){
   tb.innerHTML=''; mob.innerHTML='';
   lista.forEach(a=>{
     const sent=enviados.includes(a.nome+a.aniversario);
+    const fone=formatarTelefone(a.telefone||"");
+
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${esc(a.empresa)}</td>
       <td>${esc(a.nome)}</td>
       <td>${a.aniversario}</td>
-      <td>${esc(a.sugestao)}</td>
-      <td><button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}','${a.empresa}',this)">🎁 WhatsApp</button></td>
+      <td>${fone}</td>
+      <td><button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">🎁 WhatsApp</button></td>
     `;
     tb.appendChild(tr);
 
@@ -156,51 +170,27 @@ function renderizar(lista){
       <div><strong>Empresa:</strong> ${esc(a.empresa)}</div>
       <div><strong>Nome:</strong> ${esc(a.nome)}</div>
       <div><strong>Aniversário:</strong> ${a.aniversario}</div>
-      ${a.sugestao?`<div><strong>Sugestão:</strong> ${esc(a.sugestao)}</div>`:''}
-      <button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${a.telefone}','${a.empresa}',this)">🎁 WhatsApp</button>
+      <div><strong>Telefone:</strong> ${fone}</div>
+      <button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">🎁 WhatsApp</button>
     `;
     mob.appendChild(card);
   });
 }
 
-function filtrar(){
-  const empresa=document.getElementById('empresaFiltro').value;
-  const inicio=document.getElementById('inicio').value;
-  const fim=document.getElementById('fim').value;
-  let filtrados=aniversariantes;
-
-  if(empresa){filtrados=filtrados.filter(a=>a.empresa===empresa);}
-  if(inicio && fim){
-    const ini=new Date(inicio);
-    const f=new Date(fim);
-    filtrados=filtrados.filter(a=>{
-      const conv=new Date(converterData(a.aniversario));
-      return conv>=ini && conv<=f;
-    });
-  }
-  document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
-  renderizar(filtrados);
-}
-
 function enviar(nome, aniversario, telefone, empresa, btn){
   if(!telefone){alert('Telefone não encontrado.');return;}
-
-  // 🔹 Mensagem com link da foto incluído
   const mensagem = [
     `🎉 Olá ${nome}! Aqui é o *${empresa}* 💚`,
     ``,
-    `O Venho te deseja um feliz aniversário! 🥂🎂`,
+    `O Venho te desejar um feliz aniversário! 🥂🎂`,
     `🎈 Você é nosso convidado especial para comemorar conosco esse mês tão especial!`,
-    `📅 Seu aniversário é dia ${aniversario}, mas, preparamos um presente que vale pelo mês inteiro`,
+    `📅 Seu aniversário é dia ${aniversario}, mas preparamos um presente que vale o mês inteiro.`,
     ``,
-    `📍 Faça sua reserva:`,
-
+    `📍 Faça sua reserva conosco.`,
     `Esperamos por você! ✨`
   ].join('\n');
 
-  const fone=telefone.replace(/\D/g,'');
-  const params=new URLSearchParams({text:mensagem});
-  const link=`https://wa.me/${fone}?${params.toString()}`;
+  const link=`https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
   window.open(link,'_blank');
 
   btn.classList.add('sent');
@@ -211,12 +201,7 @@ function enviar(nome, aniversario, telefone, empresa, btn){
 }
 
 function resetar(){
-  const d=new Date();
-  const inicio=new Date(d.getFullYear(),d.getMonth(),1);
-  const fim=new Date(d.getFullYear(),d.getMonth()+1,0);
-  document.getElementById('inicio').value=formatDateInput(inicio);
-  document.getElementById('fim').value=formatDateInput(fim);
-  filtrar();
+  carregar();
 }
 
 document.addEventListener('DOMContentLoaded',carregar);
