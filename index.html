@@ -97,6 +97,8 @@ let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+
+// 🔹 Formata número no padrão 55 + DDD + número sem 9
 function formatarTelefone(num){
   const digits = num.replace(/\D/g,"");
   if(digits.length < 10) return digits;
@@ -118,13 +120,13 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    // Popula filtro de empresas
+    // 🔹 Filtro de empresas
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     document.getElementById('empresaFiltro').innerHTML=
       '<option value="">Todas as empresas</option>'+
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    // Popula filtro de meses
+    // 🔹 Filtro de meses
     const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
     const mesAtual=new Date().getMonth();
     const mesSel=document.getElementById('mesFiltro');
@@ -142,11 +144,15 @@ function filtrar(){
   const mesEscolhido=parseInt(document.getElementById('mesFiltro').value);
   let filtrados=aniversariantes;
 
-  if(empresa) filtrados=filtrados.filter(a=>a.empresa===empresa);
+  if(empresa)
+    filtrados=filtrados.filter(a=>a.empresa===empresa);
+
   if(mesEscolhido){
     filtrados=filtrados.filter(a=>{
-      const [,m]=a.aniversario.split('/').map(Number);
-      return m===mesEscolhido;
+      const partes=a.aniversario.split('/');
+      if(partes.length<2) return false;
+      const mes=parseInt(partes[1]);
+      return mes===mesEscolhido;
     });
   }
 
