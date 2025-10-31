@@ -76,7 +76,6 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
       <select id="empresaFiltro"><option value="">Todas as empresas</option></select>
       <select id="mesFiltro"></select>
       <button onclick="filtrar()">🔍 Filtrar</button>
-      <button onclick="resetar()">♻️ Mês atual</button>
     </div>
     <div id="msg">Carregando aniversariantes...</div>
     <table id="tabela">
@@ -96,14 +95,17 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
+// Escapa texto para HTML seguro
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 
-// 🔹 Formata número no padrão 55 + DDD + número sem 9
+// 🔹 Formata número no padrão 55 + DDD + número sem o 9
 function formatarTelefone(num){
+  if(!num) return "";
   const digits = num.replace(/\D/g,"");
   if(digits.length < 10) return digits;
   const ddd = digits.slice(0,2);
-  const base = digits.slice(3); // remove o 9
+  let base = digits.slice(2);
+  if(base.startsWith("9")) base = base.slice(1);
   return `55${ddd}${base}`;
 }
 
@@ -120,20 +122,20 @@ async function carregar(){
       msg.textContent='Nenhum aniversariante encontrado.';return;
     }
 
-    // 🔹 Filtro de empresas
+    // 🔹 Popula filtro de empresas
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
     document.getElementById('empresaFiltro').innerHTML=
       '<option value="">Todas as empresas</option>'+
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    // 🔹 Filtro de meses
+    // 🔹 Popula filtro de meses
     const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-    const mesAtual=new Date().getMonth();
     const mesSel=document.getElementById('mesFiltro');
-    mesSel.innerHTML=meses.map((m,i)=>`<option value="${i+1}" ${i===mesAtual?'selected':''}>${m}</option>`).join('');
+    mesSel.innerHTML='<option value="">Todos os meses</option>'+
+      meses.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
 
     msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
-    filtrar();
+    renderizar(aniversariantes);
   }catch(e){
     msg.textContent='⚠️ Erro: '+e.message;
   }
@@ -147,14 +149,13 @@ function filtrar(){
   if(empresa)
     filtrados=filtrados.filter(a=>a.empresa===empresa);
 
-  if(mesEscolhido){
+  if(mesEscolhido)
     filtrados=filtrados.filter(a=>{
       const partes=a.aniversario.split('/');
       if(partes.length<2) return false;
       const mes=parseInt(partes[1]);
       return mes===mesEscolhido;
     });
-  }
 
   document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
   renderizar(filtrados);
@@ -212,12 +213,6 @@ function enviar(nome, aniversario, telefone, empresa, btn){
     enviados.push(nome+aniversario);
     localStorage.setItem("aniversariosEnviados",JSON.stringify(enviados));
   }
-}
-
-function resetar(){
-  const mesAtual=new Date().getMonth()+1;
-  document.getElementById('mesFiltro').value=mesAtual;
-  filtrar();
 }
 
 document.addEventListener('DOMContentLoaded',carregar);
