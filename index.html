@@ -87,9 +87,7 @@ select,input[type="date"]{
   color:#001a0c;
 }
 
-.btn-filtrar:hover{
-  opacity:.9;
-}
+.btn-filtrar:hover{opacity:.9}
 
 /* ================= TABELA ================= */
 
@@ -212,7 +210,16 @@ th{
 </div>
 
 <script>
+
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
+
+/* 🔥 LINKS POR EMPRESA */
+const LINKS_EMPRESA = {
+  "MERCATTO DELÍCIA": "https://grupodvbr.github.io/aniversariosmercatto/",
+  "VILLA GOURMET": "https://link-da-villa.com",
+  "PADARIA DELÍCIA": "https://link-da-padaria.com",
+  "DELÍCIA GOURMET": "https://link-da-delicia.com"
+};
 
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
@@ -311,9 +318,7 @@ function filtrar(){
 function renderizar(lista){
 
   const tb=document.getElementById('tbody');
-  const mob=document.getElementById('mobileList');
   tb.innerHTML='';
-  mob.innerHTML='';
 
   lista.forEach(a=>{
 
@@ -335,24 +340,25 @@ function renderizar(lista){
       </td>
     `;
     tb.appendChild(tr);
-
   });
 }
 
 function enviar(nome, aniversario, telefone, empresa, btn){
+
   if(!telefone){
     alert('Telefone não encontrado.');
     return;
   }
 
-  const linkReserva = "https://grupodvbr.github.io/aniversariosmercatto/";
+  const linkReserva = LINKS_EMPRESA[empresa] ||
+  "https://grupodvbr.github.io/aniversariosmercatto/";
 
   const mensagem =
 ` *${nome}, seu aniversário está chegando!* 
 
 Sua data especial é *${aniversario}*.
 
-No mês do seu aniversário você ganha *ATÉ R$ 100 OFF* no Mercatto Delícia.
+No mês do seu aniversário você ganha *ATÉ R$ 100 OFF* no ${empresa}.
 
  Desconto progressivo  
  Válido durante todo o mês  
@@ -374,7 +380,7 @@ ${linkReserva}`;
 }
 
 document.addEventListener('DOMContentLoaded',carregar);
-</script>
 
+</script>
 </body>
 </html>
