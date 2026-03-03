@@ -213,6 +213,7 @@ function renderizar(lista){
 }
 
 
+
 function enviar(nome, aniversario, telefone, empresa, btn){
   if(!telefone){
     alert('Telefone não encontrado.');
@@ -222,19 +223,16 @@ function enviar(nome, aniversario, telefone, empresa, btn){
   const linkReserva = "https://grupodvbr.github.io/aniversariosmercatto/";
 
   const mensagem =
-` *${nome}, seu presente já está disponível!* 
+`*${nome}, seu mês chegou.*
 
-No mês do seu aniversário você ganha *ATÉ R$ 100 OFF* no Mercatto Delícia.
+Você tem direito a *ATÉ R$ 100 OFF* no Mercatto Delícia.
 
-Desconto progressivo.
-Válido durante todo o mês.
-Necessário documento com foto.
+*Válido durante todo o mês do seu aniversário.*
 
-Garanta sua reserva agora:
-
+Faça sua reserva agora:
 ${linkReserva}`;
 
-  const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+  const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem.trim())}`;
 
   window.open(link, "_blank");
 
@@ -245,7 +243,6 @@ ${linkReserva}`;
     localStorage.setItem("aniversariosEnviados",JSON.stringify(enviados));
   }
 }
-
 document.addEventListener('DOMContentLoaded',carregar);
 </script>
 </body>
