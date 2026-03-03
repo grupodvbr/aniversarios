@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>CRM MANUAL GRUPO DV</title>
+<title>CRM MANUAL GRUPO DV</title>
 
 <style>
 :root{
@@ -33,97 +33,67 @@ html,body{
   overflow-x:hidden;
 }
 
-body{
-  padding-bottom:40px;
-}
-
 .container{
   max-width:1200px;
   margin:auto;
-  padding:18px 14px;
+  padding:16px;
 }
 
 h1{
   text-align:center;
-  font-size:1.4rem;
-  font-weight:700;
-  margin-bottom:18px;
+  font-size:1.3rem;
+  margin-bottom:16px;
 }
 
 .card{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:16px;
-  box-shadow:0 15px 35px rgba(0,0,0,.4);
+  padding:14px;
 }
 
-/* ================= FILTROS ================= */
+/* FILTROS */
 
 .filter{
   display:flex;
   flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:18px;
+  gap:10px;
+  margin-bottom:16px;
 }
 
 .filter-group{
   flex:1 1 160px;
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:4px;
 }
 
 .filter-group label{
   font-size:12px;
-  font-weight:600;
   color:var(--muted);
 }
 
-select,
-input[type="date"]{
+select,input[type="date"]{
   width:100%;
   background:var(--card-2);
   border:1px solid var(--line);
   color:var(--text);
   border-radius:10px;
-  padding:12px;
+  padding:10px;
   font-size:14px;
-}
-
-select:focus,
-input:focus{
-  outline:none;
-  border-color:var(--brand);
 }
 
 .btn-filtrar{
   flex:1 1 100%;
-  margin-top:6px;
-  padding:14px;
-  font-size:14px;
-  font-weight:700;
-  border-radius:10px;
+  padding:12px;
   border:none;
-  cursor:pointer;
+  border-radius:10px;
+  font-weight:600;
   background:linear-gradient(180deg,var(--brand),var(--brand-dark));
   color:#001a0c;
 }
 
-.btn-filtrar:active{
-  transform:scale(.98);
-}
-
-/* ================= STATUS ================= */
-
-#msg{
-  text-align:center;
-  font-size:13px;
-  margin-bottom:10px;
-  color:var(--muted);
-}
-
-/* ================= TABELA DESKTOP ================= */
+/* TABELA DESKTOP */
 
 table{
   width:100%;
@@ -131,29 +101,22 @@ table{
 }
 
 th,td{
-  padding:12px 10px;
+  padding:10px;
   border-bottom:1px solid var(--line);
   font-size:14px;
 }
 
 th{
-  font-weight:600;
   color:var(--muted);
 }
 
 .btn-whats{
-  padding:8px 12px;
-  border-radius:8px;
+  padding:8px 10px;
   border:none;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
+  border-radius:8px;
   background:var(--brand);
-  color:#001a0c;
-}
-
-.btn-whats:active{
-  transform:scale(.95);
+  font-size:13px;
+  cursor:pointer;
 }
 
 .btn-whats.sent{
@@ -161,13 +124,13 @@ th{
   color:#fff;
 }
 
-/* ================= MOBILE ================= */
+/* MOBILE */
 
 .mobile-list{
   display:none;
 }
 
-@media(max-width:900px){
+@media(max-width:768px){
 
   table{
     display:none;
@@ -183,76 +146,33 @@ th{
     background:var(--card-2);
     border:1px solid var(--line);
     border-radius:12px;
-    padding:14px;
+    padding:12px;
     display:flex;
     flex-direction:column;
-    gap:8px;
+    gap:6px;
   }
 
   .mcard strong{
     font-size:12px;
     color:var(--muted);
-    display:block;
   }
 
-  .mcard div{
-    font-size:14px;
-  }
-
-  .mcard .btn-whats{
+  .mcard button{
     margin-top:8px;
     width:100%;
     padding:12px;
-    font-size:14px;
   }
 
   .filter{
     flex-direction:column;
   }
-
-  .filter-group{
-    width:100%;
-  }
-
-  .btn-filtrar{
-    width:100%;
-  }
-
-  h1{
-    font-size:1.2rem;
-  }
 }
 
-/* ================= ULTRA MOBILE ================= */
-
-@media(max-width:420px){
-
-  .container{
-    padding:14px 10px;
-  }
-
-  .card{
-    padding:14px;
-  }
-
-  select,
-  input[type="date"]{
-    font-size:13px;
-    padding:11px;
-  }
-
-  .btn-filtrar{
-    padding:13px;
-    font-size:13px;
-  }
-
-  .mcard{
-    padding:12px;
-  }
-
-  .btn-whats{
-    font-size:13px;
-  }
+#msg{
+  text-align:center;
+  font-size:13px;
+  margin-bottom:10px;
+  color:var(--muted);
 }
 </style>
 </head>
@@ -266,29 +186,29 @@ th{
 
 <div class="filter">
 
-  <div class="filter-group">
-    <label>Empresa</label>
-    <select id="empresaFiltro">
-      <option value="">Todas</option>
-    </select>
-  </div>
+<div class="filter-group">
+<label>Empresa</label>
+<select id="empresaFiltro">
+<option value="">Todas</option>
+</select>
+</div>
 
-  <div class="filter-group">
-    <label>Mês</label>
-    <select id="mesFiltro"></select>
-  </div>
+<div class="filter-group">
+<label>Mês</label>
+<select id="mesFiltro"></select>
+</div>
 
-  <div class="filter-group">
-    <label>Data início</label>
-    <input type="date" id="dataInicio">
-  </div>
+<div class="filter-group">
+<label>Data início</label>
+<input type="date" id="dataInicio">
+</div>
 
-  <div class="filter-group">
-    <label>Data fim</label>
-    <input type="date" id="dataFim">
-  </div>
+<div class="filter-group">
+<label>Data fim</label>
+<input type="date" id="dataFim">
+</div>
 
-  <button class="btn-filtrar" onclick="filtrar()">Filtrar</button>
+<button class="btn-filtrar" onclick="filtrar()">Filtrar</button>
 
 </div>
 
@@ -317,147 +237,155 @@ th{
 
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
 
-/* 🔥 LINKS POR EMPRESA */
 const LINKS_EMPRESA = {
-  "MERCATTO DELÍCIA": "https://grupodvbr.github.io/aniversariosmercatto/",
-  "VILLA GOURMET": "https://link-da-villa.com",
-  "PADARIA DELÍCIA": "https://link-da-padaria.com",
-  "DELÍCIA GOURMET": "https://link-da-delicia.com"
+"MERCATTO DELÍCIA":"https://grupodvbr.github.io/aniversariosmercatto/",
+"VILLA GOURMET":"https://link-da-villa.com",
+"PADARIA DELÍCIA":"https://link-da-padaria.com",
+"DELÍCIA GOURMET":"https://link-da-delicia.com"
 };
 
-let aniversariantes = [];
-const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
+let aniversariantes=[];
+const enviados=JSON.parse(localStorage.getItem("aniversariosEnviados")||"[]");
 
 function esc(s){
-  return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))
+return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))
 }
 
 function formatarTelefone(num){
-  if(!num) return "";
-  const digits = num.replace(/\D/g,"");
-  if(digits.length < 10) return digits;
-  const ddd = digits.slice(0,2);
-  let base = digits.slice(2);
-  if(base.startsWith("9")) base = base.slice(1);
-  return `55${ddd}${base}`;
+if(!num)return"";
+const digits=num.replace(/\D/g,"");
+if(digits.length<10)return digits;
+const ddd=digits.slice(0,2);
+let base=digits.slice(2);
+if(base.startsWith("9"))base=base.slice(1);
+return`55${ddd}${base}`;
 }
 
 async function carregar(){
-  const msg=document.getElementById('msg');
-  msg.textContent='Carregando...';
+const msg=document.getElementById('msg');
+msg.textContent='Carregando...';
+try{
+const res=await fetch(GAS_API_URL);
+const data=await res.json();
+aniversariantes=data.aniversariantes||[];
 
-  try{
-    const res=await fetch(GAS_API_URL);
-    const data=await res.json();
-    aniversariantes=data.aniversariantes||[];
+if(!aniversariantes.length){
+msg.textContent='Nenhum aniversariante encontrado.';
+return;
+}
 
-    if(!aniversariantes.length){
-      msg.textContent='Nenhum aniversariante encontrado.';
-      return;
-    }
+const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
+document.getElementById('empresaFiltro').innerHTML=
+'<option value="">Todas</option>'+
+empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
-    document.getElementById('empresaFiltro').innerHTML =
-      '<option value="">Todas</option>' +
-      empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
+const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+document.getElementById('mesFiltro').innerHTML=
+'<option value="">Todos</option>'+
+meses.map((m,i)=>`<option value="${i+1}">${m}</option>`).join("");
 
-    const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-    document.getElementById('mesFiltro').innerHTML =
-      '<option value="">Todos</option>' +
-      meses.map((m,i)=>`<option value="${i+1}">${m}</option>`).join("");
+msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
+renderizar(aniversariantes);
 
-    msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
-    renderizar(aniversariantes);
-
-  }catch(e){
-    msg.textContent='Erro ao carregar.';
-  }
+}catch(e){
+msg.textContent='Erro ao carregar.';
+}
 }
 
 function filtrar(){
 
-  const empresa = document.getElementById('empresaFiltro').value;
-  const mesEscolhido = parseInt(document.getElementById('mesFiltro').value);
-  const dataInicio = document.getElementById('dataInicio').value;
-  const dataFim = document.getElementById('dataFim').value;
+const empresa=document.getElementById('empresaFiltro').value;
+const mesEscolhido=parseInt(document.getElementById('mesFiltro').value);
+const dataInicio=document.getElementById('dataInicio').value;
+const dataFim=document.getElementById('dataFim').value;
 
-  let filtrados = aniversariantes;
+let filtrados=aniversariantes;
 
-  if(empresa){
-    filtrados = filtrados.filter(a => a.empresa === empresa);
-  }
+if(empresa)filtrados=filtrados.filter(a=>a.empresa===empresa);
 
-  if(mesEscolhido){
-    filtrados = filtrados.filter(a=>{
-      const partes = a.aniversario?.split('/');
-      if(!partes || partes.length<2) return false;
-      return parseInt(partes[1]) === mesEscolhido;
-    });
-  }
+if(mesEscolhido){
+filtrados=filtrados.filter(a=>{
+const partes=a.aniversario?.split('/');
+if(!partes||partes.length<2)return false;
+return parseInt(partes[1])===mesEscolhido;
+});
+}
 
-  if(dataInicio || dataFim){
-    filtrados = filtrados.filter(a=>{
-      const partes = a.aniversario?.split('/');
-      if(!partes || partes.length<2) return false;
+if(dataInicio||dataFim){
+filtrados=filtrados.filter(a=>{
+const partes=a.aniversario?.split('/');
+if(!partes||partes.length<2)return false;
+const anoAtual=new Date().getFullYear();
+const dataAniv=new Date(`${anoAtual}-${partes[1]}-${partes[0]}`);
+const inicio=dataInicio?new Date(dataInicio):null;
+const fim=dataFim?new Date(dataFim):null;
+if(inicio&&dataAniv<inicio)return false;
+if(fim&&dataAniv>fim)return false;
+return true;
+});
+}
 
-      const anoAtual = new Date().getFullYear();
-      const dataAniv = new Date(`${anoAtual}-${partes[1]}-${partes[0]}`);
-
-      const inicio = dataInicio ? new Date(dataInicio) : null;
-      const fim = dataFim ? new Date(dataFim) : null;
-
-      if(inicio && dataAniv < inicio) return false;
-      if(fim && dataAniv > fim) return false;
-
-      return true;
-    });
-  }
-
-  document.getElementById('msg').textContent =
-    `${filtrados.length} aniversariante(s) encontrado(s).`;
-
-  renderizar(filtrados);
+document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
+renderizar(filtrados);
 }
 
 function renderizar(lista){
 
-  const tb=document.getElementById('tbody');
-  tb.innerHTML='';
+const tb=document.getElementById('tbody');
+const mob=document.getElementById('mobileList');
+tb.innerHTML='';
+mob.innerHTML='';
 
-  lista.forEach(a=>{
+lista.forEach(a=>{
 
-    const fone=formatarTelefone(a.telefone||"");
-    const sent=enviados.includes(a.nome+a.aniversario);
+const fone=formatarTelefone(a.telefone||"");
+const sent=enviados.includes(a.nome+a.aniversario);
 
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${esc(a.empresa)}</td>
-      <td>${esc(a.nome)}</td>
-      <td>${a.aniversario||""}</td>
-      <td>${fone}</td>
-      <td>${esc(a.cargo||"")}</td>
-      <td>
-        <button class="btn-whats ${sent?'sent':''}"
-        onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">
-        WhatsApp
-        </button>
-      </td>
-    `;
-    tb.appendChild(tr);
-  });
+const tr=document.createElement('tr');
+tr.innerHTML=`
+<td>${esc(a.empresa)}</td>
+<td>${esc(a.nome)}</td>
+<td>${a.aniversario||""}</td>
+<td>${fone}</td>
+<td>${esc(a.cargo||"")}</td>
+<td>
+<button class="btn-whats ${sent?'sent':''}"
+onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">
+WhatsApp
+</button>
+</td>
+`;
+tb.appendChild(tr);
+
+const card=document.createElement('div');
+card.className='mcard';
+card.innerHTML=`
+<div><strong>Empresa:</strong> ${esc(a.empresa)}</div>
+<div><strong>Nome:</strong> ${esc(a.nome)}</div>
+<div><strong>Aniversário:</strong> ${a.aniversario||""}</div>
+<div><strong>Telefone:</strong> ${fone}</div>
+<div><strong>Cargo:</strong> ${esc(a.cargo||"")}</div>
+<button class="btn-whats ${sent?'sent':''}"
+onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">
+WhatsApp
+</button>
+`;
+mob.appendChild(card);
+
+});
 }
 
 function enviar(nome, aniversario, telefone, empresa, btn){
 
-  if(!telefone){
-    alert('Telefone não encontrado.');
-    return;
-  }
+if(!telefone){
+alert('Telefone não encontrado.');
+return;
+}
 
-  const linkReserva = LINKS_EMPRESA[empresa] ||
-  "https://grupodvbr.github.io/aniversariosmercatto/";
+const linkReserva=LINKS_EMPRESA[empresa]||
+"https://grupodvbr.github.io/aniversariosmercatto/";
 
-  const mensagem =
+const mensagem=
 ` *${nome}, seu aniversário está chegando!* 
 
 Sua data especial é *${aniversario}*.
@@ -472,15 +400,15 @@ Garanta sua reserva agora:
 
 ${linkReserva}`;
 
-  const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-  window.open(link, "_blank");
+const link=`https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+window.open(link,"_blank");
 
-  btn.classList.add('sent');
+btn.classList.add('sent');
 
-  if(!enviados.includes(nome+aniversario)){
-    enviados.push(nome+aniversario);
-    localStorage.setItem("aniversariosEnviados",JSON.stringify(enviados));
-  }
+if(!enviados.includes(nome+aniversario)){
+enviados.push(nome+aniversario);
+localStorage.setItem("aniversariosEnviados",JSON.stringify(enviados));
+}
 }
 
 document.addEventListener('DOMContentLoaded',carregar);
