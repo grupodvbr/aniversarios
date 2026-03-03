@@ -223,13 +223,22 @@ function enviar(nome, aniversario, telefone, empresa, btn){
   const linkReserva = "https://grupodvbr.github.io/aniversariosmercatto/";
 
   const mensagem =
-`*${nome}, seu mês chegou.*
+`*${nome}, seu presente de aniversário já está disponível.*
 
-Você tem direito a *ATÉ R$ 100 OFF* no Mercatto Delícia.
+No mês do seu aniversário você ganha *ATÉ R$ 100 OFF* no Mercatto Delícia.
 
-*Válido durante todo o mês do seu aniversário.*
+*Como funciona:*
+- A cada R$ 100 consumidos você recebe R$ 20 de desconto
+- Desconto progressivo
+- Limite máximo de R$ 100 OFF
 
-Faça sua reserva agora:
+*Regras importantes:*
+- Válido durante todo o mês do seu aniversário
+- Necessário documento com foto
+- Exclusivo para consumo no local
+- Um benefício por aniversariante
+
+Garanta sua reserva agora:
 ${linkReserva}`;
 
   const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem.trim())}`;
