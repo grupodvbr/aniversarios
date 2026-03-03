@@ -220,48 +220,20 @@ function enviar(nome, aniversario, telefone, empresa, btn){
     return;
   }
 
-  // 🔹 LINK DA IMAGEM DA PROMOÇÃO
-  const imagemPromo = "https://github.com/grupodvbr/aniversariosmercatto/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_d0cbe205.jpg?raw=true";
-  // Exemplo:
-  // const imagemPromo = "https://grupodvbr.github.io/imagens/aniversario-mercatto.jpg";
+  const linkReserva = "https://grupodvbr.github.io/aniversariosmercatto/"; // seu link real
 
   const mensagem =
-`🎉 *ANIVERSÁRIO NO MERCATTO DELÍCIA* 🎉
+`🎉 ${nome}, seu mês chegou! 🎂
 
-Olá ${nome}! Aqui é o *${empresa}* 💚
+Ganhe *ATÉ R$ 100 OFF* no Mercatto Delícia 💚
 
-Queremos comemorar o seu mês especial com você! 🥂✨
-
-🎁 *GANHE ATÉ R$ 100 OFF*
-
-💳 Como funciona:
-• A cada R$ 100 consumidos = R$ 20 de desconto
-• Desconto progressivo
-• Limite máximo de R$ 100 OFF
-
-📌 Exemplos:
-• R$ 100 = R$ 20 OFF
-• R$ 200 = R$ 40 OFF
-• R$ 300 = R$ 60 OFF
-• R$ 500 ou mais = R$ 100 OFF (limite)
-
-📅 Válido durante todo o mês do seu aniversário
-📄 Necessário documento com foto
-🍽️ Exclusivo para consumo no local
-👤 Um benefício por aniversariante
-
-🎂 Seu aniversário é dia ${aniversario}
-
-📸 Confira a imagem da promoção:
-${imagemPromo}
-
-✨ Faça sua reserva e venha comemorar com a gente!`;
+Faça sua reserva agora 👇
+${linkReserva}`;
 
   const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem.trim())}`;
 
   window.open(link, "_blank");
 
-  // 🔹 Marca como enviado
   btn.classList.add('sent');
 
   if(!enviados.includes(nome+aniversario)){
