@@ -2,61 +2,73 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CRM MANUAL GRUPO DV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>CRM MANUAL GRUPO DV</title>
 
 <style>
 :root{
   --bg:#0b1220;
   --card:#111827;
+  --card-2:#0f172a;
   --line:#1f2937;
   --text:#e5e7eb;
   --muted:#9ca3af;
   --brand:#22c55e;
   --brand-dark:#16a34a;
   --sent:#3b82f6;
+  --radius:14px;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-body{
+html,body{
   margin:0;
-  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  padding:0;
   background:var(--bg);
   color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  overflow-x:hidden;
+}
+
+body{
+  padding-bottom:40px;
 }
 
 .container{
   max-width:1200px;
-  margin:30px auto;
-  padding:0 16px;
+  margin:auto;
+  padding:18px 14px;
 }
 
 h1{
   text-align:center;
-  margin-bottom:20px;
-  font-size:1.5rem;
+  font-size:1.4rem;
+  font-weight:700;
+  margin-bottom:18px;
 }
 
 .card{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:20px;
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:0 15px 35px rgba(0,0,0,.4);
 }
 
 /* ================= FILTROS ================= */
 
 .filter{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-  gap:14px;
-  margin-bottom:20px;
-  align-items:end;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:18px;
 }
 
 .filter-group{
+  flex:1 1 160px;
   display:flex;
   flex-direction:column;
   gap:6px;
@@ -64,32 +76,54 @@ h1{
 
 .filter-group label{
   font-size:12px;
-  color:var(--muted);
   font-weight:600;
+  color:var(--muted);
 }
 
-select,input[type="date"]{
-  background:#0c1322;
-  color:var(--text);
+select,
+input[type="date"]{
+  width:100%;
+  background:var(--card-2);
   border:1px solid var(--line);
+  color:var(--text);
   border-radius:10px;
-  padding:10px;
+  padding:12px;
   font-size:14px;
 }
 
+select:focus,
+input:focus{
+  outline:none;
+  border-color:var(--brand);
+}
+
 .btn-filtrar{
-  background:linear-gradient(180deg,var(--brand),var(--brand-dark));
-  border:none;
-  padding:11px;
-  border-radius:10px;
+  flex:1 1 100%;
+  margin-top:6px;
+  padding:14px;
+  font-size:14px;
   font-weight:700;
+  border-radius:10px;
+  border:none;
   cursor:pointer;
+  background:linear-gradient(180deg,var(--brand),var(--brand-dark));
   color:#001a0c;
 }
 
-.btn-filtrar:hover{opacity:.9}
+.btn-filtrar:active{
+  transform:scale(.98);
+}
 
-/* ================= TABELA ================= */
+/* ================= STATUS ================= */
+
+#msg{
+  text-align:center;
+  font-size:13px;
+  margin-bottom:10px;
+  color:var(--muted);
+}
+
+/* ================= TABELA DESKTOP ================= */
 
 table{
   width:100%;
@@ -97,23 +131,29 @@ table{
 }
 
 th,td{
-  padding:12px;
+  padding:12px 10px;
   border-bottom:1px solid var(--line);
-  text-align:left;
+  font-size:14px;
 }
 
 th{
-  color:var(--muted);
   font-weight:600;
+  color:var(--muted);
 }
 
 .btn-whats{
-  background:var(--brand);
-  border:none;
   padding:8px 12px;
   border-radius:8px;
+  border:none;
+  font-size:13px;
   font-weight:600;
   cursor:pointer;
+  background:var(--brand);
+  color:#001a0c;
+}
+
+.btn-whats:active{
+  transform:scale(.95);
 }
 
 .btn-whats.sent{
@@ -121,32 +161,96 @@ th{
   color:#fff;
 }
 
-#msg{
-  text-align:center;
-  margin-bottom:10px;
-  color:var(--muted);
-}
-
 /* ================= MOBILE ================= */
 
-@media(max-width:768px){
-  table{display:none}
+.mobile-list{
+  display:none;
+}
+
+@media(max-width:900px){
+
+  table{
+    display:none;
+  }
 
   .mobile-list{
     display:flex;
     flex-direction:column;
-    gap:14px;
+    gap:12px;
   }
 
   .mcard{
-    background:#0c1322;
+    background:var(--card-2);
     border:1px solid var(--line);
     border-radius:12px;
     padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
   }
 
   .mcard strong{
+    font-size:12px;
     color:var(--muted);
+    display:block;
+  }
+
+  .mcard div{
+    font-size:14px;
+  }
+
+  .mcard .btn-whats{
+    margin-top:8px;
+    width:100%;
+    padding:12px;
+    font-size:14px;
+  }
+
+  .filter{
+    flex-direction:column;
+  }
+
+  .filter-group{
+    width:100%;
+  }
+
+  .btn-filtrar{
+    width:100%;
+  }
+
+  h1{
+    font-size:1.2rem;
+  }
+}
+
+/* ================= ULTRA MOBILE ================= */
+
+@media(max-width:420px){
+
+  .container{
+    padding:14px 10px;
+  }
+
+  .card{
+    padding:14px;
+  }
+
+  select,
+  input[type="date"]{
+    font-size:13px;
+    padding:11px;
+  }
+
+  .btn-filtrar{
+    padding:13px;
+    font-size:13px;
+  }
+
+  .mcard{
+    padding:12px;
+  }
+
+  .btn-whats{
     font-size:13px;
   }
 }
