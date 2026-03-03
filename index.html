@@ -388,13 +388,17 @@ function filtrar(){
 function renderizar(lista){
 
   const tb=document.getElementById('tbody');
+  const mobile=document.getElementById('mobileList');
+
   tb.innerHTML='';
+  mobile.innerHTML='';
 
   lista.forEach(a=>{
 
     const fone=formatarTelefone(a.telefone||"");
     const sent=enviados.includes(a.nome+a.aniversario);
 
+    // DESKTOP
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${esc(a.empresa)}</td>
@@ -410,6 +414,30 @@ function renderizar(lista){
       </td>
     `;
     tb.appendChild(tr);
+
+    // MOBILE
+    const card=document.createElement('div');
+    card.className='mcard';
+    card.innerHTML=`
+      <strong>Empresa</strong>
+      ${esc(a.empresa)}
+
+      <strong>Nome</strong>
+      ${esc(a.nome)}
+
+      <strong>Aniversário</strong>
+      ${a.aniversario||""}
+
+      <strong>Telefone</strong>
+      ${fone}
+
+      <button class="btn-whats ${sent?'sent':''}"
+      onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">
+      WhatsApp
+      </button>
+    `;
+    mobile.appendChild(card);
+
   });
 }
 
