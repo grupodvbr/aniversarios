@@ -33,17 +33,19 @@ html,body{
   overflow-x:hidden;
 }
 
+/* ================= CONTAINER ================= */
+
 .container{
   max-width:1200px;
   margin:auto;
-  padding:18px 14px;
+  padding:20px 16px;
 }
 
 h1{
   text-align:center;
-  font-size:1.35rem;
-  margin-bottom:18px;
+  font-size:1.4rem;
   font-weight:700;
+  margin-bottom:20px;
 }
 
 /* ================= CARD ================= */
@@ -52,8 +54,8 @@ h1{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:18px;
-  box-shadow:0 15px 35px rgba(0,0,0,.4);
+  padding:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
 }
 
 /* ================= FILTROS ================= */
@@ -61,32 +63,34 @@ h1{
 .filter{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:18px;
+  gap:12px;
+  margin-bottom:20px;
+  align-items:end;
 }
 
 .filter-group{
   display:flex;
   flex-direction:column;
-  gap:4px;
-  flex:1 1 150px;
+  gap:5px;
+  flex:1 1 160px;
 }
 
 .filter-group label{
   font-size:11px;
-  color:var(--muted);
   font-weight:600;
+  color:var(--muted);
 }
 
 select,
 input[type="date"]{
+  width:100%;
   background:var(--card-2);
   border:1px solid var(--line);
   color:var(--text);
   border-radius:8px;
-  padding:10px;
+  padding:10px 12px;
   font-size:13px;
-  width:100%;
+  transition:.2s;
 }
 
 select:focus,
@@ -96,7 +100,7 @@ input:focus{
 }
 
 .btn-filtrar{
-  padding:10px 14px;
+  padding:10px 16px;
   border:none;
   border-radius:8px;
   font-size:13px;
@@ -105,7 +109,11 @@ input:focus{
   background:linear-gradient(180deg,var(--brand),var(--brand-dark));
   color:#001a0c;
   height:40px;
-  align-self:flex-end;
+  transition:.2s;
+}
+
+.btn-filtrar:hover{
+  opacity:.9;
 }
 
 /* ================= STATUS ================= */
@@ -113,7 +121,7 @@ input:focus{
 #msg{
   text-align:center;
   font-size:12px;
-  margin-bottom:14px;
+  margin-bottom:16px;
   color:var(--muted);
 }
 
@@ -128,6 +136,7 @@ th,td{
   padding:12px 10px;
   border-bottom:1px solid var(--line);
   font-size:13px;
+  text-align:left;
 }
 
 th{
@@ -136,7 +145,7 @@ th{
 }
 
 .btn-whats{
-  padding:7px 12px;
+  padding:8px 12px;
   border:none;
   border-radius:6px;
   font-size:12px;
@@ -155,32 +164,33 @@ th{
   color:#fff;
 }
 
-/* ================= MOBILE RESPONSIVO REAL ================= */
+/* ================= RESPONSIVO MOBILE ================= */
 
 @media(max-width:768px){
 
   .container{
-    padding:14px 10px;
+    padding:16px 12px;
   }
 
   h1{
     font-size:1.1rem;
   }
 
-  /* filtros mais compactos */
+  /* filtros empilhados */
   .filter{
-    gap:8px;
+    flex-direction:column;
+    gap:10px;
   }
 
   .filter-group{
-    flex:1 1 100%;
+    width:100%;
   }
 
   .btn-filtrar{
     width:100%;
   }
 
-  /* transforma tabela em cards automáticos */
+  /* tabela vira cards */
   table,
   thead,
   tbody,
@@ -213,17 +223,17 @@ th{
     content:attr(data-label);
     display:block;
     font-size:11px;
+    font-weight:600;
     color:var(--muted);
     margin-bottom:2px;
   }
 
   .btn-whats{
     width:100%;
-    margin-top:8px;
+    margin-top:10px;
     padding:10px;
     font-size:13px;
   }
-
 }
 
 /* ================= ULTRA SMALL ================= */
@@ -247,7 +257,6 @@ th{
   td{
     font-size:12px;
   }
-
 }
 
 
