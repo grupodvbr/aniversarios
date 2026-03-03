@@ -15,79 +15,97 @@
   --brand:#22c55e;
   --brand-dark:#16a34a;
   --sent:#3b82f6;
+  --radius:14px;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-body{
+html,body{
   margin:0;
-  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  padding:0;
   background:var(--bg);
   color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  overflow-x:hidden;
 }
 
 .container{
   max-width:1200px;
-  margin:30px auto;
-  padding:0 16px;
+  margin:auto;
+  padding:16px;
 }
 
 h1{
   text-align:center;
-  margin-bottom:20px;
-  font-size:1.5rem;
+  font-size:1.3rem;
+  margin-bottom:16px;
 }
+
+/* ================= CARD ================= */
 
 .card{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:20px;
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
+  border-radius:var(--radius);
+  padding:16px;
 }
 
-/* ================= FILTROS ================= */
+/* ================= FILTROS DESKTOP ================= */
 
 .filter{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-  gap:14px;
-  margin-bottom:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
   align-items:end;
+  margin-bottom:16px;
 }
 
 .filter-group{
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:4px;
+  min-width:140px;
 }
 
 .filter-group label{
-  font-size:12px;
+  font-size:11px;
   color:var(--muted);
   font-weight:600;
 }
 
-select,input[type="date"]{
-  background:#0c1322;
-  color:var(--text);
+select,
+input[type="date"]{
+  background:#0f172a;
   border:1px solid var(--line);
-  border-radius:10px;
-  padding:10px;
-  font-size:14px;
+  color:var(--text);
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:13px;
 }
 
 .btn-filtrar{
-  background:linear-gradient(180deg,var(--brand),var(--brand-dark));
+  height:36px;
+  padding:0 14px;
   border:none;
-  padding:11px;
-  border-radius:10px;
-  font-weight:700;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
   cursor:pointer;
+  background:linear-gradient(180deg,var(--brand),var(--brand-dark));
   color:#001a0c;
 }
 
-.btn-filtrar:hover{opacity:.9}
+/* ================= STATUS ================= */
+
+#msg{
+  text-align:center;
+  font-size:12px;
+  margin-bottom:12px;
+  color:var(--muted);
+}
 
 /* ================= TABELA ================= */
 
@@ -97,9 +115,9 @@ table{
 }
 
 th,td{
-  padding:12px;
+  padding:10px;
   border-bottom:1px solid var(--line);
-  text-align:left;
+  font-size:13px;
 }
 
 th{
@@ -108,11 +126,12 @@ th{
 }
 
 .btn-whats{
-  background:var(--brand);
+  padding:6px 10px;
   border:none;
-  padding:8px 12px;
-  border-radius:8px;
+  border-radius:6px;
+  font-size:12px;
   font-weight:600;
+  background:var(--brand);
   cursor:pointer;
 }
 
@@ -121,32 +140,83 @@ th{
   color:#fff;
 }
 
-#msg{
-  text-align:center;
-  margin-bottom:10px;
-  color:var(--muted);
-}
-
 /* ================= MOBILE ================= */
 
+.mobile-list{
+  display:none;
+}
+
 @media(max-width:768px){
-  table{display:none}
+
+  h1{
+    font-size:1.1rem;
+  }
+
+  /* 🔥 FILTROS COMPACTOS EM LINHA */
+  .filter{
+    display:flex;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    gap:8px;
+    padding-bottom:6px;
+    margin-bottom:12px;
+  }
+
+  .filter::-webkit-scrollbar{
+    height:4px;
+  }
+
+  .filter::-webkit-scrollbar-thumb{
+    background:#222;
+    border-radius:10px;
+  }
+
+  .filter-group{
+    min-width:120px;
+    flex:0 0 auto;
+  }
+
+  select,
+  input[type="date"]{
+    padding:7px 8px;
+    font-size:12px;
+  }
+
+  .btn-filtrar{
+    height:32px;
+    padding:0 10px;
+    font-size:12px;
+    flex:0 0 auto;
+  }
+
+  table{
+    display:none;
+  }
 
   .mobile-list{
     display:flex;
     flex-direction:column;
-    gap:14px;
+    gap:10px;
   }
 
   .mcard{
-    background:#0c1322;
+    background:#0f172a;
     border:1px solid var(--line);
-    border-radius:12px;
-    padding:14px;
+    border-radius:10px;
+    padding:10px;
+    font-size:13px;
   }
 
   .mcard strong{
+    display:block;
+    font-size:11px;
     color:var(--muted);
+  }
+
+  .mcard button{
+    margin-top:8px;
+    width:100%;
+    padding:10px;
     font-size:13px;
   }
 }
