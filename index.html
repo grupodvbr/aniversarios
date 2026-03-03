@@ -223,13 +223,13 @@ function enviar(nome, aniversario, telefone, empresa, btn){
   const linkReserva = "https://grupodvbr.github.io/aniversariosmercatto/";
 
   const mensagem =
-`🎉 *${nome}, seu mês chegou!* 🎂
+`*${nome}, seu mês chegou.*
 
-Você tem direito a *ATÉ R$ 100 OFF* no Mercatto Delícia. 💚
+Você tem direito a *ATÉ R$ 100 OFF* no Mercatto Delícia.
 
-✨ Válido durante todo o mês do seu aniversário.
+*Válido durante todo o mês do seu aniversário.*
 
-Garanta sua reserva agora:
+Faça sua reserva agora:
 ${linkReserva}`;
 
   const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem.trim())}`;
@@ -243,8 +243,6 @@ ${linkReserva}`;
     localStorage.setItem("aniversariosEnviados",JSON.stringify(enviados));
   }
 }
-
-  
 document.addEventListener('DOMContentLoaded',carregar);
 </script>
 </body>
