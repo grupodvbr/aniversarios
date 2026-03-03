@@ -219,38 +219,44 @@ function enviar(nome, aniversario, telefone, empresa, btn){
     return;
   }
 
-  const mensagem = [
-    `🎉 *ANIVERSÁRIO NO MERCATTO DELÍCIA* 🎉`,
-    ``,
-    `Olá ${nome}! Aqui é o *${empresa}* 💚`,
-    ``,
-    `Queremos comemorar o seu mês especial com você! 🥂✨`,
-    ``,
-    `🎁 *GANHE ATÉ R$ 100 OFF*`,
-    ``,
-    `💳 Como funciona:`,
-    `• A cada R$ 100 consumidos = R$ 20 de desconto`,
-    `• Desconto progressivo`,
-    `• Limite máximo de R$ 100 OFF`,
-    ``,
-    `📌 Exemplos:`,
-    `• R$ 100 = R$ 20 OFF`,
-    `• R$ 200 = R$ 40 OFF`,
-    `• R$ 300 = R$ 60 OFF`,
-    `• R$ 500 ou mais = R$ 100 OFF (limite)`,
-    ``,
-    `📅 Válido durante todo o mês do seu aniversário`,
-    `📄 Necessário documento com foto`,
-    `🍽️ Exclusivo para consumo no local`,
-    `👤 Um benefício por aniversariante`,
-    ``,
-    `🎂 Seu aniversário é dia ${aniversario}`,
-    ``,
-    `✨ Faça sua reserva e venha comemorar com a gente!`
-  ].join('\n');
+function enviar(nome, aniversario, telefone, empresa, btn){
+  if(!telefone){
+    alert('Telefone não encontrado.');
+    return;
+  }
 
-  const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-  window.open(link,'_blank');
+  const mensagem =
+`🎉 *ANIVERSÁRIO NO MERCATTO DELÍCIA* 🎉
+
+Olá ${nome}! Aqui é o *${empresa}* 💚
+
+Queremos comemorar o seu mês especial com você! 🥂✨
+
+🎁 *GANHE ATÉ R$ 100 OFF*
+
+💳 Como funciona:
+• A cada R$ 100 consumidos = R$ 20 de desconto
+• Desconto progressivo
+• Limite máximo de R$ 100 OFF
+
+📌 Exemplos:
+• R$ 100 = R$ 20 OFF
+• R$ 200 = R$ 40 OFF
+• R$ 300 = R$ 60 OFF
+• R$ 500 ou mais = R$ 100 OFF (limite)
+
+📅 Válido durante todo o mês do seu aniversário
+📄 Necessário documento com foto
+🍽️ Exclusivo para consumo no local
+👤 Um benefício por aniversariante
+
+🎂 Seu aniversário é dia ${aniversario}
+
+✨ Faça sua reserva e venha comemorar com a gente!`;
+
+  const link = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
+
+  window.open(link, "_blank");
 
   btn.classList.add('sent');
 
