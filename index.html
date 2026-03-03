@@ -220,6 +220,11 @@ function enviar(nome, aniversario, telefone, empresa, btn){
     return;
   }
 
+  // 🔹 LINK DA IMAGEM DA PROMOÇÃO
+  const imagemPromo = "https://github.com/grupodvbr/aniversariosmercatto/blob/main/paste/Imagem%20do%20WhatsApp%20de%202025-08-27%20%C3%A0(s)%2010.13.55_d0cbe205.jpg?raw=true";
+  // Exemplo:
+  // const imagemPromo = "https://grupodvbr.github.io/imagens/aniversario-mercatto.jpg";
+
   const mensagem =
 `🎉 *ANIVERSÁRIO NO MERCATTO DELÍCIA* 🎉
 
@@ -247,12 +252,16 @@ Queremos comemorar o seu mês especial com você! 🥂✨
 
 🎂 Seu aniversário é dia ${aniversario}
 
+📸 Confira a imagem da promoção:
+${imagemPromo}
+
 ✨ Faça sua reserva e venha comemorar com a gente!`;
 
-  const link = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
+  const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem.trim())}`;
 
   window.open(link, "_blank");
 
+  // 🔹 Marca como enviado
   btn.classList.add('sent');
 
   if(!enviados.includes(nome+aniversario)){
