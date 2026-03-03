@@ -9,6 +9,7 @@
 :root{
   --bg:#0b1220;
   --card:#111827;
+  --card-2:#0f172a;
   --line:#1f2937;
   --text:#e5e7eb;
   --muted:#9ca3af;
@@ -35,13 +36,14 @@ html,body{
 .container{
   max-width:1200px;
   margin:auto;
-  padding:16px;
+  padding:18px 14px;
 }
 
 h1{
   text-align:center;
-  font-size:1.3rem;
-  margin-bottom:16px;
+  font-size:1.35rem;
+  margin-bottom:18px;
+  font-weight:700;
 }
 
 /* ================= CARD ================= */
@@ -50,24 +52,24 @@ h1{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:16px;
+  padding:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,.4);
 }
 
-/* ================= FILTROS DESKTOP ================= */
+/* ================= FILTROS ================= */
 
 .filter{
   display:flex;
   flex-wrap:wrap;
-  gap:12px;
-  align-items:end;
-  margin-bottom:16px;
+  gap:10px;
+  margin-bottom:18px;
 }
 
 .filter-group{
   display:flex;
   flex-direction:column;
   gap:4px;
-  min-width:140px;
+  flex:1 1 150px;
 }
 
 .filter-group label{
@@ -78,17 +80,23 @@ h1{
 
 select,
 input[type="date"]{
-  background:#0f172a;
+  background:var(--card-2);
   border:1px solid var(--line);
   color:var(--text);
   border-radius:8px;
-  padding:8px 10px;
+  padding:10px;
   font-size:13px;
+  width:100%;
+}
+
+select:focus,
+input:focus{
+  outline:none;
+  border-color:var(--brand);
 }
 
 .btn-filtrar{
-  height:36px;
-  padding:0 14px;
+  padding:10px 14px;
   border:none;
   border-radius:8px;
   font-size:13px;
@@ -96,6 +104,8 @@ input[type="date"]{
   cursor:pointer;
   background:linear-gradient(180deg,var(--brand),var(--brand-dark));
   color:#001a0c;
+  height:40px;
+  align-self:flex-end;
 }
 
 /* ================= STATUS ================= */
@@ -103,11 +113,11 @@ input[type="date"]{
 #msg{
   text-align:center;
   font-size:12px;
-  margin-bottom:12px;
+  margin-bottom:14px;
   color:var(--muted);
 }
 
-/* ================= TABELA ================= */
+/* ================= TABELA DESKTOP ================= */
 
 table{
   width:100%;
@@ -115,7 +125,7 @@ table{
 }
 
 th,td{
-  padding:10px;
+  padding:12px 10px;
   border-bottom:1px solid var(--line);
   font-size:13px;
 }
@@ -126,13 +136,18 @@ th{
 }
 
 .btn-whats{
-  padding:6px 10px;
+  padding:7px 12px;
   border:none;
   border-radius:6px;
   font-size:12px;
   font-weight:600;
   background:var(--brand);
   cursor:pointer;
+  transition:.2s;
+}
+
+.btn-whats:hover{
+  opacity:.9;
 }
 
 .btn-whats.sent{
@@ -140,86 +155,103 @@ th{
   color:#fff;
 }
 
-/* ================= MOBILE ================= */
-
-.mobile-list{
-  display:none;
-}
+/* ================= MOBILE RESPONSIVO REAL ================= */
 
 @media(max-width:768px){
+
+  .container{
+    padding:14px 10px;
+  }
 
   h1{
     font-size:1.1rem;
   }
 
-  /* 🔥 FILTROS COMPACTOS EM LINHA */
+  /* filtros mais compactos */
   .filter{
-    display:flex;
-    overflow-x:auto;
-    flex-wrap:nowrap;
     gap:8px;
-    padding-bottom:6px;
-    margin-bottom:12px;
-  }
-
-  .filter::-webkit-scrollbar{
-    height:4px;
-  }
-
-  .filter::-webkit-scrollbar-thumb{
-    background:#222;
-    border-radius:10px;
   }
 
   .filter-group{
-    min-width:120px;
-    flex:0 0 auto;
+    flex:1 1 100%;
+  }
+
+  .btn-filtrar{
+    width:100%;
+  }
+
+  /* transforma tabela em cards automáticos */
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr{
+    display:block;
+    width:100%;
+  }
+
+  thead{
+    display:none;
+  }
+
+  tr{
+    background:var(--card-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:12px;
+    padding:12px;
+  }
+
+  td{
+    border:none;
+    padding:6px 0;
+    font-size:13px;
+  }
+
+  td::before{
+    content:attr(data-label);
+    display:block;
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:2px;
+  }
+
+  .btn-whats{
+    width:100%;
+    margin-top:8px;
+    padding:10px;
+    font-size:13px;
+  }
+
+}
+
+/* ================= ULTRA SMALL ================= */
+
+@media(max-width:420px){
+
+  h1{
+    font-size:1rem;
   }
 
   select,
   input[type="date"]{
-    padding:7px 8px;
     font-size:12px;
+    padding:9px;
   }
 
   .btn-filtrar{
-    height:32px;
-    padding:0 10px;
     font-size:12px;
-    flex:0 0 auto;
   }
 
-  table{
-    display:none;
+  td{
+    font-size:12px;
   }
 
-  .mobile-list{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .mcard{
-    background:#0f172a;
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:10px;
-    font-size:13px;
-  }
-
-  .mcard strong{
-    display:block;
-    font-size:11px;
-    color:var(--muted);
-  }
-
-  .mcard button{
-    margin-top:8px;
-    width:100%;
-    padding:10px;
-    font-size:13px;
-  }
 }
+
+
+  
 </style>
 </head>
 
@@ -388,25 +420,21 @@ function filtrar(){
 function renderizar(lista){
 
   const tb=document.getElementById('tbody');
-  const mobile=document.getElementById('mobileList');
-
   tb.innerHTML='';
-  mobile.innerHTML='';
 
   lista.forEach(a=>{
 
     const fone=formatarTelefone(a.telefone||"");
     const sent=enviados.includes(a.nome+a.aniversario);
 
-    // DESKTOP
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td>${esc(a.empresa)}</td>
-      <td>${esc(a.nome)}</td>
-      <td>${a.aniversario||""}</td>
-      <td>${fone}</td>
-      <td>${esc(a.cargo||"")}</td>
-      <td>
+      <td data-label="Empresa">${esc(a.empresa)}</td>
+      <td data-label="Nome">${esc(a.nome)}</td>
+      <td data-label="Aniversário">${a.aniversario||""}</td>
+      <td data-label="Telefone">${fone}</td>
+      <td data-label="Cargo">${esc(a.cargo||"")}</td>
+      <td data-label="Ação">
         <button class="btn-whats ${sent?'sent':''}"
         onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">
         WhatsApp
@@ -414,29 +442,6 @@ function renderizar(lista){
       </td>
     `;
     tb.appendChild(tr);
-
-    // MOBILE
-    const card=document.createElement('div');
-    card.className='mcard';
-    card.innerHTML=`
-      <strong>Empresa</strong>
-      ${esc(a.empresa)}
-
-      <strong>Nome</strong>
-      ${esc(a.nome)}
-
-      <strong>Aniversário</strong>
-      ${a.aniversario||""}
-
-      <strong>Telefone</strong>
-      ${fone}
-
-      <button class="btn-whats ${sent?'sent':''}"
-      onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">
-      WhatsApp
-      </button>
-    `;
-    mobile.appendChild(card);
 
   });
 }
