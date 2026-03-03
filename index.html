@@ -4,109 +4,223 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>🎉 Aniversariantes • Mercatto Delícia</title>
+
 <style>
 :root{
-  --bg:#0b1220;--card:#111827;--line:#1f2937;
-  --text:#e5e7eb;--muted:#9ca3af;
-  --brand:#22c55e;--sent:#3b82f6;
+  --bg:#0b1220;
+  --card:#111827;
+  --line:#1f2937;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --brand:#22c55e;
+  --brand-dark:#16a34a;
+  --sent:#3b82f6;
 }
+
+*{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg);color:var(--text);
+  background:var(--bg);
+  color:var(--text);
 }
-.container{max-width:1100px;margin:16px auto;padding:0 12px}
+
+.container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 16px;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:20px;
+  font-size:1.5rem;
+}
+
 .card{
-  background:var(--card);border:1px solid var(--line);
-  border-radius:12px;padding:16px;
-}
-h1{text-align:center;margin:0 0 12px;font-size:1.3rem}
-.filter{
-  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;
-  justify-content:center
-}
-select,button{
-  border-radius:8px;padding:8px 10px;font-size:.9rem
-}
-select{
-  background:#0c1322;color:var(--text);
+  background:var(--card);
   border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
 }
-button{
-  border:none;cursor:pointer;font-weight:600;
-  transition:opacity .2s;
+
+/* ================= FILTROS ================= */
+
+.filter{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:14px;
+  margin-bottom:20px;
+  align-items:end;
 }
-button:hover{opacity:.85}
-.btn-whats{
-  background:var(--brand);color:#001a0c;border-radius:8px;
-  padding:6px 10px;display:inline-flex;align-items:center;
+
+.filter-group{
+  display:flex;
+  flex-direction:column;
   gap:6px;
 }
+
+.filter-group label{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:600;
+}
+
+select,input[type="date"]{
+  background:#0c1322;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px;
+  font-size:14px;
+}
+
+.btn-filtrar{
+  background:linear-gradient(180deg,var(--brand),var(--brand-dark));
+  border:none;
+  padding:11px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  color:#001a0c;
+}
+
+.btn-filtrar:hover{
+  opacity:.9;
+}
+
+/* ================= TABELA ================= */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+}
+
+th{
+  color:var(--muted);
+  font-weight:600;
+}
+
+.btn-whats{
+  background:var(--brand);
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
+}
+
 .btn-whats.sent{
-  background:var(--sent);color:#fff;
-}
-#msg{font-size:.9rem;margin-top:8px;color:var(--muted);text-align:center}
-footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:20px}
-
-/* ---------- Desktop tabela ---------- */
-@media(min-width:700px){
-  table{width:100%;border-collapse:collapse;margin-top:10px}
-  th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
-  th{color:var(--muted);font-weight:500}
+  background:var(--sent);
+  color:#fff;
 }
 
-/* ---------- Mobile cards ---------- */
-@media(max-width:699px){
+#msg{
+  text-align:center;
+  margin-bottom:10px;
+  color:var(--muted);
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
   table{display:none}
-  .mobile-list{display:flex;flex-direction:column;gap:10px}
-  .mcard{
-    background:#0c1322;border:1px solid var(--line);
-    border-radius:10px;padding:10px;
-    display:flex;flex-direction:column;gap:6px;
+
+  .mobile-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
   }
-  .mcard strong{color:var(--muted);font-size:.85rem}
+
+  .mcard{
+    background:#0c1322;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px;
+  }
+
+  .mcard strong{
+    color:var(--muted);
+    font-size:13px;
+  }
 }
 </style>
 </head>
+
 <body>
+
 <div class="container">
-  <h1>🎉 Aniversariantes • Mercatto Delícia</h1>
-  <div class="card">
-    <div class="filter">
-      <select id="empresaFiltro"><option value="">Todas as empresas</option></select>
-      <select id="mesFiltro"></select>
-      <button onclick="filtrar()">🔍 Filtrar</button>
-    </div>
-    <div id="msg">Carregando aniversariantes...</div>
-    <table id="tabela">
-      <thead>
-        <tr>
-          <th>Empresa</th>
-          <th>Nome</th>
-          <th>Aniversário</th>
-          <th>Telefone</th>
-          <th>Sugestão</th>
-          <th>Observação</th>
-          <th>Cargo</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="mobile-list" id="mobileList"></div>
+<h1>🎉 Aniversariantes • Mercatto Delícia</h1>
+
+<div class="card">
+
+<div class="filter">
+
+  <div class="filter-group">
+    <label>Empresa</label>
+    <select id="empresaFiltro">
+      <option value="">Todas</option>
+    </select>
   </div>
+
+  <div class="filter-group">
+    <label>Mês</label>
+    <select id="mesFiltro"></select>
+  </div>
+
+  <div class="filter-group">
+    <label>Data início</label>
+    <input type="date" id="dataInicio">
+  </div>
+
+  <div class="filter-group">
+    <label>Data fim</label>
+    <input type="date" id="dataFim">
+  </div>
+
+  <button class="btn-filtrar" onclick="filtrar()">Filtrar</button>
+
 </div>
-<footer>© Mercatto Delícia • Sistema de Aniversariantes</footer>
+
+<div id="msg">Carregando aniversariantes...</div>
+
+<table>
+<thead>
+<tr>
+<th>Empresa</th>
+<th>Nome</th>
+<th>Aniversário</th>
+<th>Telefone</th>
+<th>Cargo</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+
+<div class="mobile-list" id="mobileList"></div>
+
+</div>
+</div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzEgyXiXkU6zoZ2zqj2LRBogArNucDMOLFLhSTQo3WKZjm8th9EfmozQz5BPYo0-Bi4Bw/exec";
+
 let aniversariantes = [];
 const enviados = JSON.parse(localStorage.getItem("aniversariosEnviados") || "[]");
 
-// 🔹 Escapa texto HTML
-function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function esc(s){
+  return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))
+}
 
-// 🔹 Formata número no padrão 55 + DDD + número sem o 9
 function formatarTelefone(num){
   if(!num) return "";
   const digits = num.replace(/\D/g,"");
@@ -117,71 +231,94 @@ function formatarTelefone(num){
   return `55${ddd}${base}`;
 }
 
-// 🔹 Carrega todos os aniversariantes da planilha
 async function carregar(){
   const msg=document.getElementById('msg');
-  const tb=document.getElementById('tbody');
-  msg.textContent='Carregando...'; tb.innerHTML='';
+  msg.textContent='Carregando...';
+
   try{
     const res=await fetch(GAS_API_URL);
     const data=await res.json();
     aniversariantes=data.aniversariantes||[];
 
     if(!aniversariantes.length){
-      msg.textContent='Nenhum aniversariante encontrado.';return;
+      msg.textContent='Nenhum aniversariante encontrado.';
+      return;
     }
 
-    // 🔹 Popula filtro de empresas
     const empresas=[...new Set(aniversariantes.map(a=>a.empresa))];
-    document.getElementById('empresaFiltro').innerHTML=
-      '<option value="">Todas as empresas</option>'+
+    document.getElementById('empresaFiltro').innerHTML =
+      '<option value="">Todas</option>' +
       empresas.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join("");
 
-    // 🔹 Popula filtro de meses
     const meses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-    const mesSel=document.getElementById('mesFiltro');
-    mesSel.innerHTML='<option value="">Todos os meses</option>'+
-      meses.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
+    document.getElementById('mesFiltro').innerHTML =
+      '<option value="">Todos</option>' +
+      meses.map((m,i)=>`<option value="${i+1}">${m}</option>`).join("");
 
     msg.textContent=`${aniversariantes.length} aniversariante(s) carregado(s).`;
     renderizar(aniversariantes);
+
   }catch(e){
-    msg.textContent='⚠️ Erro ao carregar: '+e.message;
+    msg.textContent='Erro ao carregar.';
   }
 }
 
-// 🔹 Filtro manual
 function filtrar(){
-  const empresa=document.getElementById('empresaFiltro').value;
-  const mesEscolhido=parseInt(document.getElementById('mesFiltro').value);
-  let filtrados=aniversariantes;
 
-  if(empresa)
-    filtrados=filtrados.filter(a=>a.empresa===empresa);
+  const empresa = document.getElementById('empresaFiltro').value;
+  const mesEscolhido = parseInt(document.getElementById('mesFiltro').value);
+  const dataInicio = document.getElementById('dataInicio').value;
+  const dataFim = document.getElementById('dataFim').value;
 
-  if(mesEscolhido)
-    filtrados=filtrados.filter(a=>{
-      const partes=a.aniversario?.split('/');
+  let filtrados = aniversariantes;
+
+  if(empresa){
+    filtrados = filtrados.filter(a => a.empresa === empresa);
+  }
+
+  if(mesEscolhido){
+    filtrados = filtrados.filter(a=>{
+      const partes = a.aniversario?.split('/');
       if(!partes || partes.length<2) return false;
-      return parseInt(partes[1])===mesEscolhido;
+      return parseInt(partes[1]) === mesEscolhido;
     });
+  }
 
-  document.getElementById('msg').textContent=`${filtrados.length} aniversariante(s) encontrado(s).`;
+  if(dataInicio || dataFim){
+    filtrados = filtrados.filter(a=>{
+      const partes = a.aniversario?.split('/');
+      if(!partes || partes.length<2) return false;
+
+      const anoAtual = new Date().getFullYear();
+      const dataAniv = new Date(`${anoAtual}-${partes[1]}-${partes[0]}`);
+
+      const inicio = dataInicio ? new Date(dataInicio) : null;
+      const fim = dataFim ? new Date(dataFim) : null;
+
+      if(inicio && dataAniv < inicio) return false;
+      if(fim && dataAniv > fim) return false;
+
+      return true;
+    });
+  }
+
+  document.getElementById('msg').textContent =
+    `${filtrados.length} aniversariante(s) encontrado(s).`;
+
   renderizar(filtrados);
 }
 
-// 🔹 Exibe na tela
 function renderizar(lista){
+
   const tb=document.getElementById('tbody');
   const mob=document.getElementById('mobileList');
-  tb.innerHTML=''; mob.innerHTML='';
+  tb.innerHTML='';
+  mob.innerHTML='';
 
   lista.forEach(a=>{
-    const sent=enviados.includes(a.nome+a.aniversario);
+
     const fone=formatarTelefone(a.telefone||"");
-    const sugestao=a.sugestao||"";
-    const obs=a.observacao||a.obs||"";
-    const cargo=a.cargo||a.funcao||"";
+    const sent=enviados.includes(a.nome+a.aniversario);
 
     const tr=document.createElement('tr');
     tr.innerHTML=`
@@ -189,30 +326,18 @@ function renderizar(lista){
       <td>${esc(a.nome)}</td>
       <td>${a.aniversario||""}</td>
       <td>${fone}</td>
-      <td>${esc(sugestao)}</td>
-      <td>${esc(obs)}</td>
-      <td>${esc(cargo)}</td>
-      <td><button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">🎁 WhatsApp</button></td>
+      <td>${esc(a.cargo||"")}</td>
+      <td>
+        <button class="btn-whats ${sent?'sent':''}"
+        onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">
+        WhatsApp
+        </button>
+      </td>
     `;
     tb.appendChild(tr);
 
-    const card=document.createElement('div');
-    card.className='mcard';
-    card.innerHTML=`
-      <div><strong>Empresa:</strong> ${esc(a.empresa)}</div>
-      <div><strong>Nome:</strong> ${esc(a.nome)}</div>
-      <div><strong>Aniversário:</strong> ${a.aniversario||""}</div>
-      <div><strong>Telefone:</strong> ${fone}</div>
-      ${sugestao?`<div><strong>Sugestão:</strong> ${esc(sugestao)}</div>`:""}
-      ${obs?`<div><strong>Observação:</strong> ${esc(obs)}</div>`:""}
-      ${cargo?`<div><strong>Cargo:</strong> ${esc(cargo)}</div>`:""}
-      <button class="btn-whats ${sent?'sent':''}" onclick="enviar('${a.nome}','${a.aniversario}','${fone}','${a.empresa}',this)">🎁 WhatsApp</button>
-    `;
-    mob.appendChild(card);
   });
 }
-
-
 
 function enviar(nome, aniversario, telefone, empresa, btn){
   if(!telefone){
@@ -238,7 +363,6 @@ Garanta sua reserva agora:
 ${linkReserva}`;
 
   const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-
   window.open(link, "_blank");
 
   btn.classList.add('sent');
@@ -248,7 +372,9 @@ ${linkReserva}`;
     localStorage.setItem("aniversariosEnviados",JSON.stringify(enviados));
   }
 }
+
 document.addEventListener('DOMContentLoaded',carregar);
 </script>
+
 </body>
 </html>
