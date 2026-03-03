@@ -220,14 +220,14 @@ function enviar(nome, aniversario, telefone, empresa, btn){
     return;
   }
 
-  const linkReserva = "https://grupodvbr.github.io/aniversariosmercatto/"; // seu link real
+  const linkReserva = "https://grupodvbr.github.io/aniversariosmercatto/";
 
   const mensagem =
-`🎉 ${nome}, seu mês chegou! 🎂
+`${nome}, seu mês chegou.
 
-Ganhe *ATÉ R$ 100 OFF* no Mercatto Delícia 💚
+Ganhe ATÉ R$ 100 OFF no Mercatto Delícia.
 
-Faça sua reserva agora 👇
+Faça sua reserva agora:
 ${linkReserva}`;
 
   const link = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem.trim())}`;
